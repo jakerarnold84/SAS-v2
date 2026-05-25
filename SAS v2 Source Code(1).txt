@@ -1,0 +1,1556 @@
+==============================================================================
+  SUMMITAUDIENCESEGMENTS.COM v2 — COMPLETE SOURCE CODE (REV. 2)
+  Five static pages + one stylesheet + build instructions
+  Compiled 2026-05-25
+==============================================================================
+
+WHAT CHANGED IN REV. 2
+------------------------------------------------------------------------------
+  - Stat-card title font reduced to 8px with white-space:nowrap so
+    every stat title fits on a single line and the 6-up grid is even.
+  - Header nav: explicit text-decoration:none on every link state so
+    no stray default-blue underline appears under the SAS wordmark.
+  - Footer Column 2 ("Site") trimmed to just Audience Explorer + THIIC.
+  - Footer Column 3 ("Contact") trimmed to just info@summitaudiencesegments.com
+    (LinkedIn link removed).
+  - All email addresses normalized to info@summitaudiencesegments.com.
+    Founder direct emails on the About page replaced with the general inbox.
+  - "Audience Explorer" link points to platform.html#summit-exchange
+    (the Audience Explorer site does not exist yet; this anchors the
+    visitor to the Summit Exchange hero on the platform page).
+  - THIIC nav + footer links now point to https://thiic.com (external,
+    new tab) instead of the internal thiic.html page.
+
+CONTENTS
+------------------------------------------------------------------------------
+  01. v2/BUILD_INSTRUCTIONS.md            Build instructions · read first
+  02. v2/styles.css                       Design tokens + component CSS
+  03. v2/home.html                        Page 01 · Home
+  04. v2/platform.html                    Page 02 · Platform
+  05. v2/data.html                        Page 03 · Data
+  06. v2/thiic.html                       Page 04 · THIIC
+  07. v2/about.html                       Page 05 · About
+
+HOW TO USE
+------------------------------------------------------------------------------
+  - Hand the entire file (or this PDF) to your AI builder / developer.
+  - Each page is a self-contained static .html file. No framework.
+  - Drop the 5 .html files + styles.css into any folder and open in a
+    browser. No build step required.
+  - To ship: any static host works (Vercel, Netlify, Cloudflare Pages,
+    GitHub Pages, S3, or a plain web server).
+
+
+==============================================================================
+  FILE 01 / 7   v2/BUILD_INSTRUCTIONS.md
+              Build instructions · read first
+              46 lines · 3.1 kB
+==============================================================================
+
+# summitaudiencesegments.com — Build Handoff
+
+## What's in this folder
+
+- `home.html` · `platform.html` · `data.html` · `thiic.html` · `about.html` — five static pages, each fully self-contained.
+- `styles.css` — single source of truth for design tokens, components, and responsive rules.
+- `assets/` — pink icon PNG (used as nav logo + favicon) and white horizontal logo (kept in reserve).
+- `Spec.html` — long-form build spec with token table, type scale, component conventions, and per-page section sequence.
+- `home-print.html` — print-optimized variant of home for PDF export.
+
+## Build instructions for the AI builder
+
+**Reproduce these five pages visually 1:1.** The HTML/CSS in this folder is the source of truth. You may translate to a framework of your choice (Next.js, Astro, plain HTML, etc.), but the rendered output must match these mocks pixel-for-pixel at 1280px+ widths and reflow gracefully below.
+
+**Hard rules:**
+1. **Do not paraphrase, edit, abbreviate, or expand any copy.** Every word, number, kicker label, and punctuation choice is locked. If something reads odd, flag for review — do not change it.
+2. **Use the exact color tokens.** `#EB0557` coral · `#FFD83A` yellow · `#00FFFF` cyan · `#0A0A0C` canvas · `#111114` surface · `rgba(255,255,255,0.08)` borders. See `styles.css` for the full set.
+3. **Use Inter + JetBrains Mono only.** Load via Google Fonts (already wired in the HTML `<head>`). All numerals use JetBrains Mono with `font-variant-numeric: tabular-nums`.
+4. **Yellow phrase underline** is the `linear-gradient(180deg, transparent 0, transparent 70%, var(--c-yellow) 70%, var(--c-yellow) 92%, transparent 92%)` rule wrapped on a single phrase per H1/H2 (`.y-under` class). Reuse the rule; do not change the percentages.
+5. **Section alternation** is hard-locked: default canvas → `--alt` background → canvas → alt … across every page. Every section sets its `background-color` explicitly. Never inherit.
+6. **Footer + nav + status-compliance ribbon** are identical across all five pages.
+
+**Routing:**
+- `/` → home
+- `/platform` → platform (linked from footer as "Audience Explorer")
+- `/data` → data
+- `/thiic` → thiic
+- `/about` → about
+- `/contact`, `/privacy`, `/terms`, `/summit-do-not-sell` — wire utility pages with the same nav + footer chrome.
+
+**Forms:** All CTAs are `mailto:info@summitaudiencesegments.com` in the mock. Replace with a real form + submission endpoint of your choice (HubSpot, Formspree, custom backend) — pop a confirmation modal on submit.
+
+**Hosting:** Deploy to a `v2.` subdomain or sandbox first. Visual + content QA before any production swap.
+
+**Performance targets:** LCP < 2s, no render-blocking scripts, font-display: swap, critical CSS inlined where possible.
+
+**Mobile nav:** Below 1024px the desktop center-nav is hidden. Build a hamburger drawer with the same five links + "Sign in" + "Get in touch" CTA.
+
+**Assets you'll need from us:**
+- Real founder photos (currently placeholder initials in team cards)
+- Brand-approved DSP partner logos (currently single-letter placeholder chips on the Platform page)
+
+## Questions
+
+Email `info@summitaudiencesegments.com` before changing any copy or visual treatment.
+
+==============================================================================
+  FILE 02 / 7   v2/styles.css
+              Design tokens + component CSS
+              375 lines · 21.0 kB
+==============================================================================
+
+/* SAS v2 — Dark-canvas rebuild based on the Summit Exchange deck DNA.
+   Pink #EB0557 · Yellow #FFD83A · Cyan #00FFFF · Inter + JetBrains Mono */
+
+:root {
+  --c-bg-canvas:    #0A0A0C;
+  --c-bg-surface:   #111114;
+  --c-bg-elev:      #16161A;
+  --c-bg-input:     #0F0F12;
+  --c-text:         #FFFFFF;
+  --c-text-dim:     #C8C8D0;
+  --c-text-mute:    #7C8090;
+  --c-text-faint:   #5B5B62;
+  --c-coral:        #EB0557;
+  --c-coral-soft:   rgba(235,5,87,0.10);
+  --c-coral-line:   rgba(235,5,87,0.32);
+  --c-yellow:       #FFD83A;
+  --c-yellow-soft:  rgba(255,216,58,0.10);
+  --c-cyan:         #00FFFF;
+  --c-cyan-soft:    rgba(0,255,255,0.10);
+  --c-cyan-line:    rgba(0,255,255,0.32);
+  --c-border:       rgba(255,255,255,0.08);
+  --c-border-hover: rgba(255,255,255,0.16);
+  --c-font:         "Inter", system-ui, -apple-system, sans-serif;
+  --c-mono:         "JetBrains Mono", ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; background: var(--c-bg-canvas); color: var(--c-text);
+  font-family: var(--c-font); -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01", "cv11";
+}
+body { line-height: 1.55; }
+
+/* faint grid overlay across page */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+  background-size: 96px 96px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.15));
+}
+.page > * { position: relative; z-index: 1; }
+
+/* --------- NAV --------- */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(10,10,12,0.85); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--c-border);
+  padding: 16px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; flex-wrap: nowrap; white-space: nowrap;
+}
+.nav__brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0; text-decoration: none; color: inherit; }
+.nav__brand:link, .nav__brand:visited, .nav__brand:hover, .nav__brand:active { text-decoration: none; color: inherit; }
+.nav__brand img { height: 32px; width: auto; display: block; }
+.nav__brand b { font-weight: 700; color: var(--c-coral); font-size: 16px; letter-spacing: -0.01em; }
+.nav__brand span { font-weight: 500; color: var(--c-text); font-size: 16px; letter-spacing: -0.01em; text-decoration: none; }
+/* Belt-and-suspenders: kill default browser underlines on every link inside the nav.
+   Some browsers / autoplay-styling layers re-apply text-decoration: underline to
+   anchor tags despite an earlier override. Spelling out each state guarantees the
+   nav never shows the default blue-underline a:link treatment. */
+.nav a, .nav a:link, .nav a:visited, .nav a:hover, .nav a:active { text-decoration: none; }
+.nav__links { display: flex; align-items: center; gap: 4px; flex: 1 1 auto; justify-content: center; }
+.nav__link {
+  padding: 8px 14px; border-radius: 6px;
+  font-size: 13.5px; font-weight: 500; color: var(--c-text-dim);
+  text-decoration: none; transition: all .14s;
+}
+.nav__link:hover { background: rgba(255,255,255,0.04); color: var(--c-text); }
+.nav__link--active { color: var(--c-text); position: relative; }
+.nav__link--active::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: 0; height: 2px; background: var(--c-coral); border-radius: 2px; }
+.nav__right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.nav__signin { padding: 8px 12px; font-size: 12.5px; color: var(--c-text-dim); font-weight: 500; text-decoration: none; }
+.nav__signin:hover { color: var(--c-text); }
+.nav__cta {
+  padding: 10px 18px; border-radius: 8px;
+  background: var(--c-coral); color: #fff;
+  font-size: 13px; font-weight: 600;
+  border: none; cursor: pointer; text-decoration: none;
+  white-space: nowrap;
+}
+.nav__cta:hover { background: #c30449; }
+
+/* --------- KICKER + HEADLINES --------- */
+.kicker {
+  font-family: var(--c-mono); font-size: 11px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--c-text-mute); font-weight: 600;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.kicker::before { content: ""; width: 24px; height: 1px; background: var(--c-yellow); display: inline-block; flex-shrink: 0; }
+
+.h1 { font-size: 60px; line-height: 1.05; letter-spacing: -0.03em; font-weight: 700; color: var(--c-text); margin: 0; }
+.h1--xl { font-size: 72px; line-height: 1.02; letter-spacing: -0.035em; }
+.h2 { font-size: 36px; line-height: 1.08; letter-spacing: -0.025em; font-weight: 700; color: var(--c-text); margin: 0; }
+.h3 { font-size: 22px; line-height: 1.25; letter-spacing: -0.015em; font-weight: 700; color: var(--c-text); margin: 0; }
+.sub { font-size: 19px; line-height: 1.55; color: var(--c-text-dim); margin: 0; }
+.body { font-size: 16px; line-height: 1.65; color: var(--c-text-dim); margin: 0; }
+.body-sm { font-size: 14px; line-height: 1.6; color: var(--c-text-dim); }
+
+.y-under {
+  background-image: linear-gradient(180deg, transparent 0, transparent 70%, var(--c-yellow) 70%, var(--c-yellow) 92%, transparent 92%);
+  padding: 0 3px;
+}
+
+/* --------- SECTION --------- */
+.section { padding: 112px 32px 96px; position: relative; }
+.section__inner { max-width: 1280px; margin: 0 auto; }
+.section--alt { background: #08080a; border-top: 1px solid var(--c-border); border-bottom: 1px solid var(--c-border); }
+.section__head { text-align: center; max-width: 980px; margin: 0 auto 56px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.section__head .kicker { justify-content: center; }
+.section__head .sub { max-width: 760px; }
+.section__head--left { text-align: left; max-width: 1280px; margin: 0 0 48px; align-items: flex-start; }
+
+/* --------- HERO --------- */
+.hero { padding: 120px 32px 96px; border-bottom: 1px solid var(--c-border); position: relative; }
+.hero::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(60% 50% at 75% 25%, rgba(235,5,87,0.10) 0%, transparent 60%),
+              radial-gradient(40% 40% at 15% 80%, rgba(0,255,255,0.05) 0%, transparent 60%);
+}
+.hero__inner { max-width: 1280px; margin: 0 auto; position: relative; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.hero__inner .h1 { max-width: 1100px; }
+.hero__inner .sub { max-width: 780px; }
+.hero__ctas { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; justify-content: center; }
+.hero__pills { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
+
+/* --------- BUTTONS --------- */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 24px; border-radius: 8px;
+  font-size: 14px; font-weight: 600; text-decoration: none;
+  border: 1px solid transparent; cursor: pointer; transition: all .14s;
+  font-family: var(--c-font);
+}
+.btn--coral { background: var(--c-coral); color: #fff; }
+.btn--coral:hover { background: #c30449; }
+.btn--outline { background: transparent; color: var(--c-text); border-color: rgba(255,255,255,0.3); }
+.btn--outline:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.5); }
+.btn--lg { padding: 16px 28px; font-size: 15px; }
+.btn--sm { padding: 10px 16px; font-size: 12.5px; }
+
+/* --------- PILL --------- */
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px;
+  background: var(--c-bg-input); border: 1px solid var(--c-border);
+  font-family: var(--c-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--c-text-mute); font-weight: 600;
+}
+.pill--cyan { color: var(--c-cyan); border-color: var(--c-cyan-line); background: var(--c-cyan-soft); }
+.pill--yellow { color: var(--c-yellow); border-color: rgba(255,216,58,0.32); background: var(--c-yellow-soft); }
+.pill__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-cyan); }
+.pill--cyan .pill__dot { background: var(--c-cyan); box-shadow: 0 0 8px rgba(0,255,255,0.5); }
+.pill--yellow .pill__dot { background: var(--c-yellow); }
+
+/* --------- STAT CELLS / GRIDS --------- */
+.grid { display: grid; gap: 20px; }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+.grid-6 { grid-template-columns: repeat(6, 1fr); gap: 0; }
+
+.stat-strip { display: grid; grid-template-columns: repeat(6, 1fr); border: 1px solid var(--c-border); border-radius: 12px; overflow: hidden; background: var(--c-bg-surface); }
+.stat-strip__cell { padding: 22px 22px; border-right: 1px solid var(--c-border); display: flex; flex-direction: column; gap: 6px; }
+.stat-strip__cell:last-child { border-right: none; }
+.stat-strip__cap { font-family: var(--c-mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--c-text-mute); font-weight: 600; }
+.stat-strip__val { font-family: var(--c-mono); font-variant-numeric: tabular-nums; font-size: 32px; font-weight: 600; letter-spacing: -0.025em; color: var(--c-text); line-height: 1; }
+.stat-strip__sub { font-size: 12.5px; color: var(--c-text-dim); }
+
+.stat-card {
+  background: var(--c-bg-surface); border: 1px solid var(--c-border);
+  border-radius: 12px; padding: 24px 24px 22px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.stat-card__cap {
+  font-family: var(--c-mono); font-size: 8px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--c-text-mute); font-weight: 600;
+  /* Keep every stat title on one line so the 6-up grid stays visually even.
+     Overflow ellipses act as a safety net if a title runs longer than its card. */
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.stat-card__val { font-family: var(--c-mono); font-variant-numeric: tabular-nums; font-size: 38px; font-weight: 600; letter-spacing: -0.025em; color: var(--c-text); line-height: 1; margin-top: 4px; }
+.stat-card__val--coral { color: var(--c-coral); }
+.stat-card__val--cyan { color: var(--c-cyan); }
+.stat-card__sub { font-size: 13px; color: var(--c-text-dim); line-height: 1.55; margin-top: 4px; }
+
+/* --------- CARDS --------- */
+.card {
+  background: var(--c-bg-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  padding: 28px 26px 26px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: border-color .14s;
+}
+.card:hover { border-color: var(--c-border-hover); }
+.card__kicker { font-family: var(--c-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--c-coral); font-weight: 600; }
+.card__title { font-size: 19px; line-height: 1.3; letter-spacing: -0.01em; font-weight: 700; color: var(--c-text); margin: 0; }
+.card__body { font-size: 14.5px; line-height: 1.6; color: var(--c-text-dim); margin: 0; }
+.card__body b { color: var(--c-text); font-weight: 500; }
+.card__foot { margin-top: auto; padding-top: 14px; border-top: 1px dashed var(--c-border); font-family: var(--c-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--c-cyan); font-weight: 600; }
+
+.card--cyan { border-color: var(--c-cyan-line); background: rgba(0,255,255,0.04); }
+.card--cyan .card__kicker { color: var(--c-cyan); }
+.card--coral { border-color: var(--c-coral-line); background: var(--c-coral-soft); }
+
+/* --------- FLOW DIAGRAM --------- */
+.flow {
+  background: var(--c-bg-surface); border: 1px solid var(--c-border);
+  border-radius: 12px; padding: 28px; margin: 20px 0;
+}
+.flow__row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; justify-content: space-between; }
+.flow__row + .flow__row { margin-top: 14px; }
+.flow__node {
+  background: var(--c-bg-input); border: 1px solid var(--c-border);
+  border-radius: 8px; padding: 12px 14px;
+  font-family: var(--c-mono); font-size: 11px; letter-spacing: 0.10em;
+  text-transform: uppercase; color: var(--c-text); font-weight: 600;
+  white-space: nowrap;
+}
+.flow__node--coral { color: var(--c-coral); border-color: var(--c-coral-line); background: var(--c-coral-soft); }
+.flow__node--cyan { color: var(--c-cyan); border-color: var(--c-cyan-line); background: var(--c-cyan-soft); }
+.flow__arrow { color: var(--c-text-mute); font-family: var(--c-mono); }
+
+/* --------- COMPARISON --------- */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.compare__col {
+  background: var(--c-bg-surface); border: 1px solid var(--c-border);
+  border-radius: 12px; padding: 28px 26px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.compare__col--win {
+  border-color: var(--c-cyan-line);
+  background: linear-gradient(180deg, rgba(0,255,255,0.04) 0%, rgba(0,255,255,0.01) 100%);
+  box-shadow: 0 0 0 1px rgba(0,255,255,0.10), 0 12px 36px -16px rgba(0,255,255,0.22);
+}
+.compare__cap { font-family: var(--c-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--c-text-mute); font-weight: 600; }
+.compare__col--win .compare__cap { color: var(--c-cyan); }
+.compare__row { font-size: 14.5px; line-height: 1.55; color: var(--c-text-dim); padding: 8px 0; border-bottom: 1px dashed var(--c-border); }
+.compare__row:last-child { border-bottom: none; }
+.compare__row b { color: var(--c-text); font-weight: 500; }
+.compare__col--win .compare__row b { color: var(--c-cyan); }
+.compare__foot { margin-top: auto; padding-top: 14px; font-family: var(--c-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-text-mute); font-weight: 600; }
+.compare__col--win .compare__foot { color: var(--c-cyan); }
+
+/* --------- BOTTOM KICKER --------- */
+.bottom-kicker {
+  margin-top: 36px; padding-top: 22px; border-top: 1px dashed var(--c-border);
+  font-family: var(--c-mono); font-size: 13px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--c-coral); font-weight: 600;
+  text-align: center;
+}
+
+/* --------- CHECKLIST --------- */
+.checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; }
+.check-row {
+  display: grid; grid-template-columns: 280px 22px 1fr;
+  align-items: center; gap: 14px;
+  padding: 14px 0; border-bottom: 1px solid var(--c-border);
+}
+.check-row__cap { font-family: var(--c-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--c-text-mute); font-weight: 600; }
+.check-row__icon {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--c-cyan-soft); border: 1px solid var(--c-cyan-line);
+  display: grid; place-items: center; color: var(--c-cyan); font-size: 12px; font-weight: 700;
+}
+.check-row__val { font-size: 14.5px; color: var(--c-text); line-height: 1.5; }
+
+/* --------- FOOTER --------- */
+.footer {
+  background: var(--c-bg-canvas); border-top: 1px solid var(--c-border);
+  padding: 64px 32px 0;
+}
+.footer__inner { max-width: 1280px; margin: 0 auto; }
+    .footer__grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; padding-bottom: 48px; border-bottom: 1px solid var(--c-border); }
+.footer__col ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
+.footer__brand-line { font-size: 14px; color: var(--c-text-dim); margin: 16px 0 0; line-height: 1.55; max-width: 320px; }
+.footer__col h4 { font-family: var(--c-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #A0AAC4; margin: 0 0 14px; font-weight: 600; }
+.footer__col a { font-size: 13px; color: #CBD2E3; text-decoration: none; }
+.footer__col a:hover { color: var(--c-text); }
+.footer__conditions { padding: 28px 0; border-bottom: 1px solid var(--c-border); font-family: var(--c-mono); font-size: 11.5px; letter-spacing: 0.06em; color: var(--c-text-dim); display: flex; gap: 18px; flex-wrap: wrap; }
+.footer__conditions a { color: var(--c-text-dim); text-decoration: none; }
+.footer__conditions a:hover { color: var(--c-text); }
+.footer__compliance { padding: 22px 0; display: flex; gap: 22px; flex-wrap: wrap; align-items: center; font-family: var(--c-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-text-mute); font-weight: 600; }
+.footer__compliance .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-coral); display: inline-block; margin-right: 8px; }
+.footer__bottom { padding: 22px 0 32px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; font-size: 12px; color: var(--c-text-mute); border-top: 1px solid var(--c-border); }
+.footer__bottom a { color: var(--c-text-mute); text-decoration: none; }
+.footer__bottom a:hover { color: var(--c-text); }
+
+/* --------- HANDSHAKE (THIIC) --------- */
+.handshake { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: stretch; }
+.handshake__side {
+  background: var(--c-bg-surface); border: 1px solid var(--c-border);
+  border-radius: 12px; padding: 28px 24px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.handshake__side--brand { border-color: var(--c-coral-line); background: var(--c-coral-soft); }
+.handshake__side--summit { border-color: var(--c-cyan-line); background: var(--c-cyan-soft); }
+.handshake__mid {
+  background: var(--c-bg-surface); border: 1px solid var(--c-border);
+  border-radius: 12px; padding: 28px 24px;
+  display: flex; flex-direction: column; gap: 16px; align-items: center; justify-content: center; text-align: center;
+}
+.handshake__cap { font-family: var(--c-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; }
+.handshake__side--brand .handshake__cap { color: var(--c-coral); }
+.handshake__side--summit .handshake__cap { color: var(--c-cyan); }
+.handshake__mid .handshake__cap { color: var(--c-text-mute); }
+.handshake__step { font-size: 13.5px; color: var(--c-text-dim); padding-left: 18px; position: relative; line-height: 1.55; }
+.handshake__step::before { content: "●"; position: absolute; left: 0; top: 0; font-size: 8px; color: var(--c-text-mute); }
+.handshake__side--brand .handshake__step::before { color: var(--c-coral); }
+.handshake__side--summit .handshake__step::before { color: var(--c-cyan); }
+.handshake__time { font-family: var(--c-mono); font-size: 28px; font-weight: 600; color: var(--c-text); letter-spacing: -0.02em; }
+
+/* --------- PROTOCOL STEPS --------- */
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.step {
+  background: var(--c-bg-surface); border: 1px solid var(--c-border);
+  border-radius: 10px; padding: 18px 18px 16px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.step__header { display: flex; align-items: baseline; justify-content: space-between; }
+.step__num { font-family: var(--c-mono); font-size: 18px; font-weight: 700; color: var(--c-coral); }
+.step__role { font-family: var(--c-mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-text-mute); padding: 2px 6px; border-radius: 3px; border: 1px solid currentColor; font-weight: 600; }
+.step__role--sender { color: var(--c-coral); }
+.step__role--bilateral { color: var(--c-text-mute); }
+.step__role--recipient { color: var(--c-cyan); }
+.step__name { font-family: var(--c-mono); font-size: 13px; letter-spacing: 0.05em; font-weight: 700; color: var(--c-text); }
+.step__desc { font-size: 12.5px; color: var(--c-text-dim); line-height: 1.5; }
+
+/* --------- TEAM CARDS --------- */
+.team { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.team-card {
+  background: var(--c-bg-surface); border: 1px solid var(--c-border);
+  border-radius: 12px; padding: 32px 28px 28px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.team-card__photo {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--c-bg-elev); border: 1px solid var(--c-border-hover);
+  display: grid; place-items: center;
+  font-family: var(--c-mono); font-weight: 700; font-size: 22px; color: var(--c-text);
+}
+.team-card__role { font-family: var(--c-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--c-coral); font-weight: 600; margin-top: 4px; }
+.team-card__name { font-size: 22px; font-weight: 700; color: var(--c-text); letter-spacing: -0.01em; margin: -6px 0 4px; }
+.team-card__bio { font-size: 13px; color: var(--c-text-dim); line-height: 1.6; }
+.team-card__bio b { color: var(--c-text); font-weight: 500; }
+.team-card__edu { margin-top: auto; padding-top: 12px; border-top: 1px dashed var(--c-border); font-family: var(--c-mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-text-mute); font-weight: 600; }
+
+/* --------- RESPONSIVE --------- */
+@media (max-width: 1024px) {
+  .nav__links { display: none; }
+  .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-6, .stat-strip { grid-template-columns: repeat(3, 1fr); }
+  .stat-strip__cell:nth-child(3n) { border-right: none; }
+  .compare, .handshake { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: repeat(2, 1fr); }
+  .team { grid-template-columns: 1fr; }
+  .footer__grid { grid-template-columns: 1fr; gap: 32px; }
+  .h1 { font-size: 44px; }
+  .h1--xl { font-size: 56px; }
+  .h2 { font-size: 28px; }
+  .sub { font-size: 17px; }
+  .hero { padding: 80px 24px 64px; }
+  .section { padding: 80px 24px 64px; }
+}
+@media (max-width: 640px) {
+  .grid-3, .grid-4, .grid-2, .stat-strip { grid-template-columns: 1fr; }
+  .stat-strip__cell { border-right: none; border-bottom: 1px solid var(--c-border); }
+  .steps { grid-template-columns: 1fr; }
+  .h1 { font-size: 36px; }
+  .h2 { font-size: 26px; }
+}
+
+==============================================================================
+  FILE 03 / 7   v2/home.html
+              Page 01 · Home
+              330 lines · 28.2 kB
+==============================================================================
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Summit Audience Segments — From Patient Intent to Rx Fulfillment</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/png" href="assets/logo-icon-pink.png" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="page">
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="home.html" class="nav__brand">
+    <img src="assets/logo-icon-pink.png" alt="" />
+    <span>Summit <b>AudienceSegments</b></span>
+  </a>
+  <div class="nav__links">
+    <a class="nav__link nav__link--active" href="home.html">Home</a>
+    <a class="nav__link" href="platform.html">Platform</a>
+    <a class="nav__link" href="data.html">Data</a>
+    <a class="nav__link" href="https://thiic.com" target="_blank" rel="noopener">THIIC ↗</a>
+    <a class="nav__link" href="about.html">About</a>
+  </div>
+  <div class="nav__right">
+    <a class="nav__signin" href="#">Sign in to Summit Exchange ↗</a>
+    <a class="nav__signin" href="#">Sign in to THIIC Portal ↗</a>
+    <a class="nav__cta" href="#contact">Get in touch</a>
+  </div>
+</nav>
+
+<!-- 1.1 HERO -->
+<section class="hero">
+  <div class="hero__inner">
+    <span class="kicker">PLATFORM OVERVIEW</span>
+    <h1 class="h1 h1--xl">From patient <span class="y-under">intent</span> to Rx fulfillment.</h1>
+    <p class="sub">Summit's data layer maps the entire patient acquisition funnel — from first intent signal through verified fulfillment — across the largest exclusive condition-confirmed cohort in healthcare.</p>
+    <div class="hero__ctas">
+      <a class="btn btn--coral btn--lg" href="#contact">Talk to Our Team ↗</a>
+      <a class="btn btn--outline btn--lg" href="platform.html">See the Platform ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- HERO STAT STRIP -->
+<section class="section" style="padding-top: 48px; padding-bottom: 48px;">
+  <div class="section__inner">
+    <div class="stat-strip">
+      <div class="stat-strip__cell"><span class="stat-strip__cap">T3 · Qualified Intent</span><span class="stat-strip__val">15.3M+</span></div>
+      <div class="stat-strip__cell"><span class="stat-strip__cap">T2 · Dx-Qualified</span><span class="stat-strip__val">218,071</span></div>
+      <div class="stat-strip__cell"><span class="stat-strip__cap">T1 · Tx-Verified</span><span class="stat-strip__val">140,216</span></div>
+      <div class="stat-strip__cell"><span class="stat-strip__cap">HCP · Verified Prescribers</span><span class="stat-strip__val">166,464</span></div>
+      <div class="stat-strip__cell"><span class="stat-strip__cap">Exclusive License</span><span class="stat-strip__val">20-Year</span></div>
+      <div class="stat-strip__cell"><span class="stat-strip__cap">Annual Rx Events</span><span class="stat-strip__val">1,008,348</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 1.2 THE OPPORTUNITY -->
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head">
+      <span class="kicker">THE OPPORTUNITY</span>
+      <h2 class="h2">Pharma marketing is fragmented. The economics reflect it.</h2>
+    </div>
+    <div style="max-width: 920px; margin: 0 auto 40px; display: flex; flex-direction: column; gap: 18px;">
+      <p class="body">Pharma brands spend over <b style="color:#fff">$30 billion annually</b> on patient acquisition and DTC media in the United States. That spend flows through a fragmented ecosystem of vendors — data providers, identity vendors, clean rooms, lead gen platforms, landing page hosts, DSPs, attribution tools — each charging margins of 50–85% to bridge the last mile between a media impression and a converted patient.</p>
+      <p class="body">The reason the margins are sustainable: no single vendor owns the full stack. Each layer is necessary, none of them are sufficient, and brands pay each one separately.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="stat-card"><span class="stat-card__cap">Annual US Pharma DTC Spend</span><span class="stat-card__val stat-card__val--coral">$30B+</span><span class="stat-card__sub">Pharma patient acquisition + DTC media flowing through third-party vendor stacks.</span></div>
+      <div class="stat-card"><span class="stat-card__cap">Typical Vendor Margin</span><span class="stat-card__val">60–85%</span><span class="stat-card__sub">Captured by lead gen vendors bridging media → converted patient.</span></div>
+      <div class="stat-card"><span class="stat-card__cap">Vendors per Campaign</span><span class="stat-card__val">5–10</span><span class="stat-card__sub">Distinct vendor relationships brands operate per major condition campaign.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 1.3 WHY FRAGMENTATION PERSISTS -->
+<section class="section">
+  <div class="section__inner">
+    <div class="section__head">
+      <span class="kicker">WHY IT HASN'T CONSOLIDATED</span>
+      <h2 class="h2">Three structural barriers protect the fragmentation.</h2>
+    </div>
+    <div class="grid grid-3">
+      <div class="card"><span class="card__kicker">01 · Data Exclusivity</span><h3 class="card__title">Operationally generated, not aggregated.</h3><p class="card__body">The patient-acquisition data that produces high-converting cohorts isn't aggregated — it's <b>operationally generated</b> by companies that ran condition-specific campaigns for years. Building it from scratch takes a decade and tens of millions of dollars. Acquiring it is rare because the asset rarely changes hands.</p></div>
+      <div class="card"><span class="card__kicker">02 · Sponsor Entity Restrictions</span><h3 class="card__title">Pharma brands can't be the ad sponsor.</h3><p class="card__body">Meta, Google, and most major DSPs restrict pharma brands from advertising prescription drugs directly. Unbranded condition campaigns can run, but the legal sponsor must be a <b>separate entity</b>. Holding companies and pharma brands can't structurally be that sponsor for their own clients without standing up an independent operating company.</p></div>
+      <div class="card"><span class="card__kicker">03 · Integration Complexity</span><h3 class="card__title">Every vendor has its own everything.</h3><p class="card__body">Every vendor in the stack has its own data model, its own consent framework, its own audit requirements, its own DSP relationships. Stitching them together requires <b>engineering investment</b> that no single layer alone justifies.</p></div>
+    </div>
+    <div class="bottom-kicker">These three barriers are the moat. Summit is built to be the company that crosses all three.</div>
+  </div>
+</section>
+
+<!-- 1.4 WHAT SUMMIT IS -->
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head">
+      <span class="kicker">SUMMIT IN ONE LINE</span>
+      <h2 class="h2">Summit is the <span class="y-under">vertically integrated</span> pharma acquisition platform.</h2>
+      <p class="sub">Exclusive data layer · proprietary identity protocol · in-house unbranded sponsor capability · full-stack campaign infrastructure.</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="card"><span class="card__kicker">Layer · 01</span><h3 class="card__title">Data Layer</h3><p class="card__body">A <b>20-year exclusive license (2026–2046)</b> to a decade's worth of condition-specific patient acquisition data. <b>15.3M condition-confirmed records</b> across diabetes, sleep apnea, obesity, cardiac, polypharmacy, and adjacent conditions.</p></div>
+      <div class="card"><span class="card__kicker">Layer · 02</span><h3 class="card__title">Identity Protocol</h3><p class="card__body"><b>THIIC</b> — Tokenized Healthcare Identity Interchange Cryptography. Bilateral encryption protocol that enables data partnerships without any PII transit, without vendor middleware fees. <b>Patent-pending. Production-deployed.</b></p></div>
+      <div class="card"><span class="card__kicker">Layer · 03</span><h3 class="card__title">Unbranded Sponsor</h3><p class="card__body">Summit operates as the <b>legal sponsor</b> of unbranded Meta and Google campaigns on behalf of pharma brands — a structurally separate entity that lets pharma brands access platforms they otherwise cannot.</p></div>
+      <div class="card"><span class="card__kicker">Layer · 04</span><h3 class="card__title">Campaign Platform</h3><p class="card__body">End-to-end campaign infrastructure: audience exploration, identity matching, DSP activation, landing pages, dynamic qualifiers, lead management, brand page recreation, display creative, MLR workflow, attribution.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 1.5 THE CHEAT CODE -->
+<section class="section">
+  <div class="section__inner">
+    <div class="section__head">
+      <span class="kicker">THE DATA · THE CHEAT CODE</span>
+      <h2 class="h2">A decade of patient acquisition. <span class="y-under">Already built.</span> Yours on day one.</h2>
+      <p class="sub">Licensing Summit's data isn't buying records. It's skipping the part where you spend 10 years and tens of millions of dollars trying to build them yourself.</p>
+    </div>
+    <div class="compare">
+      <div class="compare__col">
+        <span class="compare__cap">What it takes to build this from scratch</span>
+        <div class="compare__row"><b>10+ years</b> of operational campaigns across diabetes, obesity, sleep apnea, cardiac, polypharmacy.</div>
+        <div class="compare__row"><b>Three healthcare operating entities</b> running condition-specific patient acquisition simultaneously.</div>
+        <div class="compare__row"><b>Tens of millions of dollars</b> in unbranded media + qualified intake infrastructure.</div>
+        <div class="compare__row"><b>A decade of consent-based intake forms</b>, call centers, fulfillment partners.</div>
+        <div class="compare__row"><b>Continuous data refresh</b> against real Rx fulfillment events.</div>
+        <div class="compare__foot">10+ Years · Tens of $M · Three Entities</div>
+      </div>
+      <div class="compare__col compare__col--win">
+        <span class="compare__cap">What you get on Day One with a Summit license</span>
+        <div class="compare__row"><b>15.3M+ records</b> of condition-confirmed patient intent, built operationally across 9 condition pathways.</div>
+        <div class="compare__row"><b>A 20-year exclusive license</b> to a dataset no competitor can access — ever.</div>
+        <div class="compare__row"><b>An audience your brand can target tomorrow morning</b>, without rebuilding what already exists.</div>
+        <div class="compare__row"><b>First-party, post-conversion, consent-based records</b> — already compliant, already deliverable.</div>
+        <div class="compare__row"><b>&lt; 24-hour refresh</b> against ongoing Rx fulfillment — current, not historical.</div>
+        <div class="compare__foot">Day One · 20-Year Exclusive · &lt; 24h Fresh</div>
+      </div>
+    </div>
+    <div class="bottom-kicker">Built once. Licensed for two decades. Replication cost: hundreds of millions. Acquisition cost: a license fee.</div>
+  </div>
+</section>
+
+<!-- 1.6 DATA DEPTH -->
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head">
+      <span class="kicker">THE DATA · WHAT'S INSIDE</span>
+      <h2 class="h2"><span class="y-under">Depth,</span> not just size.</h2>
+      <p class="sub">The 15.3M record count is the headline. What makes the data exclusive is what's inside each record.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="stat-card"><span class="stat-card__cap">Rx Fulfillment Events</span><span class="stat-card__val">1,008,348</span><span class="stat-card__sub">Full Rx history on file across T1. Multi-year supply cadence per patient.</span></div>
+      <div class="stat-card"><span class="stat-card__cap">T3 → T1 Confirmed Conversions</span><span class="stat-card__val stat-card__val--cyan">140,216</span><span class="stat-card__sub">Funnel velocity from intent signal to verified treatment on file.</span></div>
+      <div class="stat-card"><span class="stat-card__cap">T3 ↔ T1/T2 Cross-Matches</span><span class="stat-card__val stat-card__val--coral">386,000+</span><span class="stat-card__sub">Identity-graph cross-match across the funnel.</span></div>
+      <div class="stat-card"><span class="stat-card__cap">GLP-1 Shipped Sub-Cohort</span><span class="stat-card__val">19,470</span><span class="stat-card__sub">Verified treatment-confirmed cohort on supply at last refresh.</span></div>
+      <div class="stat-card"><span class="stat-card__cap">Condition Pathways Mapped</span><span class="stat-card__val">9</span><span class="stat-card__sub">Diabetes, OSA, Cardiac, AFib, Obesity, GLP-1 Bridge, Polypharmacy, Medicare Advantage, Access Programs.</span></div>
+      <div class="stat-card"><span class="stat-card__cap">Refresh Cadence</span><span class="stat-card__val">&lt; 24h</span><span class="stat-card__sub">Daily refresh against fulfillment events. Data is current, not historical.</span></div>
+    </div>
+    <p class="body" style="max-width: 920px; margin: 36px auto 0; text-align: center;">Every record originated from a real patient who self-identified on an unbranded condition campaign. <b style="color:#fff">First-party. Consent-based. De-identified per HIPAA Safe Harbor.</b> The dataset is not a model, not a list purchase, not a probabilistic append. It's the operational output of a decade of condition-specific patient acquisition campaigns.</p>
+    <div class="bottom-kicker">Built operationally. Refreshed continuously. Exclusive for 20 years.</div>
+  </div>
+</section>
+
+<!-- 1.7 BRAND USE CASES -->
+<section class="section">
+  <div class="section__inner">
+    <div class="section__head">
+      <span class="kicker">WHAT BRANDS DO WITH IT</span>
+      <h2 class="h2">Eight ways brands use Summit's data.</h2>
+      <p class="sub">Each use case maps to a specific tier combination and campaign pattern. Summit configures the mix per the brand's commercial objective.</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="card"><span class="card__kicker">01 · New Patient Acquisition</span><p class="card__body">Reach diagnosed patients before the next claim. Verified condition + intent signal in T3 panel.</p><div class="card__foot">TIER MIX: T3 + Inbound CTC</div></div>
+      <div class="card"><span class="card__kicker">02 · Medicare Coverage Expansion</span><p class="card__body">Activate patients whose new coverage just opened access to previously-unaffordable therapy.</p><div class="card__foot">TIER MIX: T3 + Medicare segment</div></div>
+      <div class="card"><span class="card__kicker">03 · Adherence &amp; Refill</span><p class="card__body">Multi-year supply behavior with patient-level fill cadence on file. Activate at predicted refill or abandonment moments.</p><div class="card__foot">TIER MIX: T1 + GLP-1</div></div>
+      <div class="card"><span class="card__kicker">04 · Brand Switching</span><p class="card__body">Identify patients on competitor therapies who match the switch profile. Comorbidity-aware, payer-aware.</p><div class="card__foot">TIER MIX: T1 + cross-brand overlay</div></div>
+      <div class="card"><span class="card__kicker">05 · HCP Activation</span><p class="card__body">166,464 prescriber NPIs linked to confirmed patient volume. Warm prescribers, not cold specialty codes.</p><div class="card__foot">TIER MIX: HCP Layer + condition</div></div>
+      <div class="card"><span class="card__kicker">06 · Access Program Targeting</span><p class="card__body">Patients clinically qualified but blocked by insurance, authorization, or documentation. The audience access programs are built for.</p><div class="card__foot">TIER MIX: T2 (93,154 cohort)</div></div>
+      <div class="card"><span class="card__kicker">07 · Closed-Loop Attribution</span><p class="card__body">Match Summit-seeded campaigns to downstream supply fulfillment. 140K+ T3 → T1 confirmed converts on file demonstrate funnel velocity.</p><div class="card__foot">TIER MIX: T3 seeded → T1 match</div></div>
+      <div class="card"><span class="card__kicker">08 · AI Training + Lookalike Seeds</span><p class="card__body">Verified, consent-based, condition-confirmed records as training input for predictive models or seeds for lookalike expansion.</p><div class="card__foot">TIER MIX: T3 + T1 derivative</div></div>
+    </div>
+    <div class="bottom-kicker">One dataset. Eight use cases. Brand picks the outcome; Summit configures the tier mix.</div>
+  </div>
+</section>
+
+<!-- 1.8 MEDIA ECONOMICS -->
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head">
+      <span class="kicker">THE DATA · MEDIA ECONOMICS</span>
+      <h2 class="h2">Better seeds. <span class="y-under">Lower cost.</span> Higher conversion.</h2>
+      <p class="sub">Summit's data isn't only a targeting asset — it's a media-spend multiplier. Every campaign that starts with Summit's audience costs less to run and converts more of what it touches.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card"><span class="card__kicker">Impact · 01</span><h3 class="card__title">Seed lists that don't need help finding the patient</h3><p class="card__body">The seed list defines who a campaign reaches. Most data vendors offer seeds that are <b>modeled, inferred, or aggregated</b> from claims. Summit's seed is <b>real patients who already raised their hand</b> on the condition.</p><div class="card__foot">Result: Lower CPM. Less wasted media.</div></div>
+      <div class="card"><span class="card__kicker">Impact · 02</span><h3 class="card__title">Lookalikes built on confirmed conversions</h3><p class="card__body">DSP lookalike models built on <b>post-conversion patient records</b> produce dramatically tighter expansion than seeds built on behavioral proxies or claims data. <b>Verified seed quality drives lookalike quality directly.</b></p><div class="card__foot">Result: Tighter expansion at same spend.</div></div>
+      <div class="card card--cyan"><span class="card__kicker">Impact · 03</span><h3 class="card__title">Qualified from the start</h3><p class="card__body">Summit-seeded traffic enters the funnel <b>already condition-confirmed</b>. The qualifier flow skips questions about attributes Summit already knows. <b>Fewer questions, less drop-off, more qualified completions.</b></p><div class="card__foot">Result: Meaningful conversion lift.</div></div>
+    </div>
+    <p class="body" style="max-width: 920px; margin: 32px auto 0; text-align: center;">These aren't optimizations stacked together — <b style="color:#fff">they compound.</b> Cheaper impressions reach more relevant patients, who convert at a higher rate through a shorter qualifier flow. The marketing math improves in three places at once, on the same campaign budget.</p>
+    <div class="bottom-kicker">Cheaper to run. More qualified to convert. Built on a decade of operational data competitors cannot access.</div>
+  </div>
+</section>
+
+<!-- 1.9 BRAND BENEFITS -->
+<section class="section">
+  <div class="section__inner">
+    <div class="section__head">
+      <span class="kicker">WHY BRANDS WIN WITH SUMMIT</span>
+      <h2 class="h2">Measurable outcomes brands can defend internally.</h2>
+      <p class="sub">Summit isn't a vendor relationship that adds friction. It's a platform that compresses time, cost, and operational complexity.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="stat-card"><span class="stat-card__cap">Conversion on Seeded Traffic</span><span class="stat-card__val stat-card__val--cyan">2×+</span><span class="stat-card__sub">Summit-seeded campaigns convert at 2×+ the rate of cold traffic because qualifier flows skip questions Summit already knows from the seed list.</span></div>
+      <div class="stat-card"><span class="stat-card__cap">Cost per Qualified Lead</span><span class="stat-card__val">Lower</span><span class="stat-card__sub">Owned audience seeding + dynamic qualifier shortening + integrated attribution all reduce per-lead cost vs. third-party lead gen.</span></div>
+      <div class="stat-card"><span class="stat-card__cap">MLR Approval Cycles</span><span class="stat-card__val">Faster</span><span class="stat-card__sub">Summit's consent framework, ISI templates, and compliance posture pre-pass standard MLR review, compressing approval cycles.</span></div>
+      <div class="stat-card"><span class="stat-card__cap">Platform Contract</span><span class="stat-card__val stat-card__val--coral">Single</span><span class="stat-card__sub">Replaces 5–7 vendor relationships with one. One contract, one BAA, one audit trail, one operational surface.</span></div>
+      <div class="stat-card"><span class="stat-card__cap">Attribution End-to-End</span><span class="stat-card__val">Integrated</span><span class="stat-card__sub">Closed-loop from impression to Rx fulfillment, in one platform. Eliminates the vendor stitching that costs both time and accuracy.</span></div>
+      <div class="stat-card"><span class="stat-card__cap">Audience Layer Access</span><span class="stat-card__val">Compounding</span><span class="stat-card__sub">Every campaign brands run through Summit feeds Summit's data layer. Brands benefit from a constantly growing addressable audience.</span></div>
+    </div>
+    <div class="bottom-kicker">Higher quality. Lower cost. Faster cycles. Less complexity.</div>
+  </div>
+</section>
+
+<!-- 1.10 PLATFORM VS STATUS QUO -->
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head">
+      <span class="kicker">WHAT SUMMIT REPLACES</span>
+      <h2 class="h2"><span class="y-under">One platform.</span> One contract. The whole stack.</h2>
+      <p class="sub">Today, pharma brands stitch together 5–7 vendor relationships per major campaign. Summit replaces all of them with one integrated platform.</p>
+    </div>
+    <div class="compare">
+      <div class="compare__col">
+        <span class="compare__cap">Status Quo · How brands run campaigns today</span>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">Data Provider</div>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">Identity Resolution Vendor</div>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">Clean Room</div>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">Lead Generation Vendor</div>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">Landing Page Platform</div>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">DSP / Programmatic Buy</div>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">Lead Delivery / CRM Integration</div>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">Attribution / Measurement</div>
+        <div class="compare__foot">5–7 contracts · 5–7 BAAs · 5–7 data flows · Fragmented audit · Vendor margin stacking</div>
+      </div>
+      <div class="compare__col compare__col--win">
+        <span class="compare__cap">Summit Exchange · How brands run with Summit</span>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">Audience Layer</div>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">Identity Protocol (THIIC)</div>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">DSP Activation</div>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">Unbranded Sponsor Capability</div>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">Landing Page Studio + Dynamic Qualifier</div>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">Lead Management + Routing</div>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">Display Campaign Studio</div>
+        <div class="compare__row" style="font-family:var(--c-mono); font-size:13px;">Closed-Loop Attribution</div>
+        <div class="compare__foot">1 contract · 1 BAA · 1 audit trail · 1 platform · Unified compliance posture</div>
+      </div>
+    </div>
+    <div class="bottom-kicker">Same workflow. Less complexity. Better economics. One platform.</div>
+  </div>
+</section>
+
+<!-- 1.11 CLOSING CTA -->
+<section class="section" id="contact">
+  <div class="section__inner">
+    <div class="section__head">
+      <span class="kicker">STARTING THE CONVERSATION</span>
+      <h2 class="h2">Where this goes next depends on what you need.</h2>
+      <p class="sub">Summit Audience Segments works with brands, agencies, holding companies, and strategic partners across the full range of commercial structures. The right next step depends on what you're building.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card"><span class="card__kicker">If you're a brand</span><p class="card__body">The fastest path is a focused conversation about your <b>target conditions, audience needs, and timeline.</b> We'll scope a license structure and walk through match rates and cohort sizing.</p></div>
+      <div class="card card--cyan"><span class="card__kicker">If you're an agency or holding company</span><p class="card__body">Summit operates as the <b>independent sponsor entity</b> for unbranded campaign work that brand clients cannot run directly. Multi-brand relationships across the full data layer are available.</p></div>
+      <div class="card card--coral"><span class="card__kicker">If you're exploring a strategic partnership</span><p class="card__body">Summit's data is exclusive. The platform is operational. The protocol is proprietary. We're open to <b>category exclusive, full exclusive, and partnership / rev-share</b> structures depending on what you're building.</p></div>
+    </div>
+    <div style="text-align: center; margin-top: 48px;">
+      <a class="btn btn--coral btn--lg" href="mailto:info@summitaudiencesegments.com">Talk to Our Team ↗</a>
+      <div style="margin-top: 18px; font-family: var(--c-mono); font-size: 14px; color: var(--c-text-dim); letter-spacing: 0.06em;">info@summitaudiencesegments.com</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__grid">
+      <div>
+        <div class="nav__brand"><img src="assets/logo-icon-pink.png" alt="" style="height:32px"/><span>Summit <b>AudienceSegments</b></span></div>
+        <p class="footer__brand-line">First-party healthcare audience data. 20-year exclusive license.</p>
+      </div>
+      <div class="footer__col">
+        <h4>Site</h4>
+        <ul>
+          <li><a href="platform.html#summit-exchange">Audience Explorer</a></li>
+          <li><a href="https://thiic.com" target="_blank" rel="noopener">THIIC ↗</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:info@summitaudiencesegments.com">info@summitaudiencesegments.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__conditions">
+      <a href="data.html#diabetes">Diabetes</a><span style="color:var(--c-text-faint)">·</span>
+      <a href="data.html#sleep-apnea">Sleep Apnea</a><span style="color:var(--c-text-faint)">·</span>
+      <a href="data.html#cardiac">Cardiac</a><span style="color:var(--c-text-faint)">·</span>
+      <a href="data.html#obesity">Obesity / GLP-1</a><span style="color:var(--c-text-faint)">·</span>
+      <a href="data.html#polypharmacy">Polypharmacy</a><span style="color:var(--c-text-faint)">·</span>
+      <a href="data.html#medicare">Medicare Advantage</a><span style="color:var(--c-text-faint)">·</span>
+      <a href="data.html#pain">Chronic Pain</a><span style="color:var(--c-text-faint)">·</span>
+      <a href="data.html#incontinence">Incontinence</a><span style="color:var(--c-text-faint)">·</span>
+      <a href="data.html#respiratory">Respiratory</a>
+    </div>
+    <div class="footer__compliance">
+      <span><span class="dot"></span>ENCRYPTED · AES-256-GCM</span>
+      <span><span class="dot"></span>HIPAA SAFE HARBOR</span>
+      <span><span class="dot"></span>BAA COMPATIBLE</span>
+      <span><span class="dot"></span>SOC 2 TYPE II IN PROGRESS</span>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 Summit Audience Segments, LLC. All rights reserved.</span>
+      <span><a href="#">Do Not Sell or Share My Personal Information</a> · <a href="#">Cookie Preferences</a> · <a href="#">Privacy</a> · <a href="#">Terms</a></span>
+    </div>
+  </div>
+</footer>
+
+</body></html>
+
+==============================================================================
+  FILE 04 / 7   v2/platform.html
+              Page 02 · Platform
+              272 lines · 26.9 kB
+==============================================================================
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Platform · Summit Audience Segments</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/png" href="assets/logo-icon-pink.png" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="page">
+
+<nav class="nav">
+  <a href="home.html" class="nav__brand"><img src="assets/logo-icon-pink.png" alt="" /><span>Summit <b>AudienceSegments</b></span></a>
+  <div class="nav__links">
+    <a class="nav__link" href="home.html">Home</a>
+    <a class="nav__link nav__link--active" href="platform.html">Platform</a>
+    <a class="nav__link" href="data.html">Data</a>
+    <a class="nav__link" href="https://thiic.com" target="_blank" rel="noopener">THIIC ↗</a>
+    <a class="nav__link" href="about.html">About</a>
+  </div>
+  <div class="nav__right">
+    <a class="nav__signin" href="#">Sign in to Summit Exchange ↗</a>
+    <a class="nav__signin" href="#">Sign in to THIIC Portal ↗</a>
+    <a class="nav__cta" href="#contact">Get in touch</a>
+  </div>
+</nav>
+
+<section class="hero" id="summit-exchange">
+  <div class="hero__inner">
+    <span class="kicker">SUMMIT EXCHANGE</span>
+    <h1 class="h1 h1--xl">One platform. <span class="y-under">Every step</span> from audience to attribution.</h1>
+    <p class="sub">Summit Exchange is the campaign infrastructure underneath the data. Audience exploration, identity matching, DSP activation, landing pages, dynamic qualifiers, lead management, display campaigns, attribution — all in one platform.</p>
+    <div class="hero__ctas">
+      <a class="btn btn--coral btn--lg" href="#">Open Summit Exchange ↗</a>
+      <a class="btn btn--outline btn--lg" href="#contact">Talk to Our Team ↗</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">PLATFORM · END-TO-END INFRASTRUCTURE</span><h2 class="h2">Every step. One platform.</h2><p class="sub">A single licensing agreement covers the entire stack. No vendor stitching, no integration cost, no data leak between systems.</p></div>
+    <div class="flow">
+      <div class="flow__row">
+        <div class="flow__node flow__node--coral">Audience Explorer</div><span class="flow__arrow">→</span>
+        <div class="flow__node flow__node--cyan">Identity Match · THIIC</div><span class="flow__arrow">→</span>
+        <div class="flow__node">DSP Activation</div><span class="flow__arrow">→</span>
+        <div class="flow__node flow__node--coral">Unbranded Campaign</div><span class="flow__arrow">→</span>
+        <div class="flow__node">Dynamic Qualifier</div><span class="flow__arrow">→</span>
+        <div class="flow__node">Branded Landing</div>
+      </div>
+      <div class="flow__row">
+        <div class="flow__node">Lead Capture</div><span class="flow__arrow">→</span>
+        <div class="flow__node">Lead Validation</div><span class="flow__arrow">→</span>
+        <div class="flow__node">Lead Routing</div><span class="flow__arrow">→</span>
+        <div class="flow__node">Lead Delivery</div><span class="flow__arrow">→</span>
+        <div class="flow__node flow__node--cyan">Attribution Matchback</div>
+      </div>
+    </div>
+    <div class="grid grid-3" style="margin-top:32px;">
+      <div class="card"><span class="card__kicker">One contract</span><p class="card__body">A single licensing agreement covers the entire stack. No vendor stitching, no integration cost, no data leak between systems.</p></div>
+      <div class="card"><span class="card__kicker">One operational surface</span><p class="card__body">Brand teams operate the campaign from one platform. Audience, creative, qualifier, form, lead routing, attribution — all in Summit Exchange.</p></div>
+      <div class="card"><span class="card__kicker">One growing dataset</span><p class="card__body">Every campaign feeds Summit's data layer. The cohort grows in real time as the platform operates.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">PLATFORM · AUDIENCE EXPLORER</span><h2 class="h2">Sales-driven audience exploration.</h2><p class="sub">Real cohort sizes. Real-time filtering. Eight use cases. Direct path to licensing.</p></div>
+    <p class="body" style="max-width:920px;margin:0 auto 36px;text-align:center;">Audience Explorer is the operational surface where licensed buyers — and prospects in active conversation — explore Summit's exclusive dataset. Filter by tier, condition, demographic, and geography. The audience size updates in real time as the scope changes.</p>
+    <div class="grid grid-4">
+      <div class="card"><span class="card__kicker">Acquisition</span><h3 class="card__title">T3 + CTC</h3><p class="card__body">Pre-claim intent.</p></div>
+      <div class="card"><span class="card__kicker">Modeling</span><h3 class="card__title">T3 + T1 + T2</h3><p class="card__body">Observed seed quality.</p></div>
+      <div class="card"><span class="card__kicker">AI Input</span><h3 class="card__title">T3 + T1</h3><p class="card__body">Verified training data.</p></div>
+      <div class="card"><span class="card__kicker">Optimization</span><h3 class="card__title">T3 suppress + T1 retarget</h3><p class="card__body">Don't burn CPM on hand-raisers.</p></div>
+      <div class="card"><span class="card__kicker">Access Programs</span><h3 class="card__title">T2 (93K access cohort)</h3><p class="card__body">Process-blocked patients.</p></div>
+      <div class="card"><span class="card__kicker">Adherence</span><h3 class="card__title">T1 + GLP-1</h3><p class="card__body">Multi-year fill cadence.</p></div>
+      <div class="card"><span class="card__kicker">HCP Activation</span><h3 class="card__title">HCP + condition</h3><p class="card__body">166K confirmed NPIs.</p></div>
+      <div class="card"><span class="card__kicker">Attribution</span><h3 class="card__title">T3 seeded → T1 match</h3><p class="card__body">End-to-end funnel.</p></div>
+    </div>
+    <div class="bottom-kicker">Use case driven. Tier mix auto-configured. Every number on screen ties to a real cohort property.</div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">PLATFORM · BILATERAL EXCHANGE</span><h2 class="h2">Brand brings their data. Summit brings ours. We find the overlap. <span class="y-under">Nobody loses control.</span></h2></div>
+    <p class="body" style="max-width:920px;margin:0 auto 32px;text-align:center;">When a pharma brand wants to match their first-party PHI against Summit's cohort — for lookalike modeling, attribution, or audience expansion — THIIC runs the bilateral exchange under the hood. The brand's PHI never leaves their environment. Summit's data never leaves Summit's environment. Hashes exchange. Overlap surfaces. Both parties see the matched cohort size and identifier references; neither sees the other's underlying data.</p>
+    <div class="handshake">
+      <div class="handshake__side handshake__side--brand">
+        <span class="handshake__cap">Brand Side</span>
+        <h3 class="h3" style="font-size:18px">Brand PHI</h3>
+        <div class="handshake__step">Local hashing in brand environment</div>
+        <div class="handshake__step">Hash · sign · transmit one-way</div>
+        <div class="handshake__step">Verify Summit signatures · receive matched IDs</div>
+        <div style="margin-top:auto;padding-top:14px;border-top:1px dashed var(--c-border);font-size:12px;color:var(--c-text-mute)">Brand's data never left brand environment.</div>
+      </div>
+      <div class="handshake__mid">
+        <span class="handshake__cap">THIIC Protocol</span>
+        <div style="font-size:13.5px;color:var(--c-text-dim);line-height:1.55">Hash · Encrypt · Sign<br>Transmit · Verify · Unwrap</div>
+        <div class="handshake__time">&lt; 90 sec</div>
+        <span class="handshake__cap" style="color:var(--c-cyan)">Bilateral · Auditable</span>
+      </div>
+      <div class="handshake__side handshake__side--summit">
+        <span class="handshake__cap">Summit Side</span>
+        <h3 class="h3" style="font-size:18px">Summit Cohort</h3>
+        <div class="handshake__step">Local hashing in Summit environment</div>
+        <div class="handshake__step">Receive · verify · respond signed</div>
+        <div class="handshake__step">Compute overlap · receive matched IDs</div>
+        <div style="margin-top:auto;padding-top:14px;border-top:1px dashed var(--c-border);font-size:12px;color:var(--c-text-mute)">Summit's data never left Summit environment.</div>
+      </div>
+    </div>
+    <div class="bottom-kicker">15–30 second exchange. Auditable. Hash-chain integrity verified bilaterally.</div>
+    <div style="text-align:center;margin-top:24px;"><a class="btn btn--outline" href="thiic.html">Learn more about THIIC →</a></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">PLATFORM · DSP ACTIVATION</span><h2 class="h2">Push the cohort. Every major DSP. One click.</h2></div>
+    <p class="body" style="max-width:920px;margin:0 auto 32px;text-align:center;">Once a cohort is built and matched, push it to the DSP of choice. Native connectors to Meta Custom Audiences, Google Customer Match, The Trade Desk, and DeepIntent. Hash format converted per DSP requirements. Audience ID returned and stored. Refresh schedule configurable per audience.</p>
+    <div class="grid grid-4">
+      <div class="card" style="align-items:center;text-align:center"><div style="width:56px;height:56px;border-radius:50%;background:var(--c-bg-input);border:1px solid var(--c-border);display:grid;place-items:center;font-family:var(--c-mono);font-size:22px;font-weight:700;color:#fff">M</div><h3 class="card__title" style="font-size:18px">Meta Ads Manager</h3><p class="card__body" style="font-size:13px">Custom Audiences API · hashed identifiers</p></div>
+      <div class="card" style="align-items:center;text-align:center"><div style="width:56px;height:56px;border-radius:50%;background:var(--c-bg-input);border:1px solid var(--c-border);display:grid;place-items:center;font-family:var(--c-mono);font-size:22px;font-weight:700;color:#fff">G</div><h3 class="card__title" style="font-size:18px">Google Customer Match</h3><p class="card__body" style="font-size:13px">Customer Match · cross-platform</p></div>
+      <div class="card" style="align-items:center;text-align:center"><div style="width:56px;height:56px;border-radius:50%;background:var(--c-bg-input);border:1px solid var(--c-border);display:grid;place-items:center;font-family:var(--c-mono);font-size:22px;font-weight:700;color:#fff">T</div><h3 class="card__title" style="font-size:18px">The Trade Desk</h3><p class="card__body" style="font-size:13px">First-party data onboarding</p></div>
+      <div class="card" style="align-items:center;text-align:center"><div style="width:56px;height:56px;border-radius:50%;background:var(--c-bg-input);border:1px solid var(--c-border);display:grid;place-items:center;font-family:var(--c-mono);font-size:22px;font-weight:700;color:#fff">D</div><h3 class="card__title" style="font-size:18px">DeepIntent</h3><p class="card__body" style="font-size:13px">Healthcare-native DSP</p></div>
+    </div>
+    <p class="body" style="max-width:920px;margin:32px auto 0;text-align:center;">Activation happens downstream of THIIC's bilateral exchange. <b style="color:#fff">PHI never enters the DSP.</b> Brands push hashed audiences to DSPs that already accept hashed identifiers as standard. Each DSP returns a confirmation audience ID, and Summit logs the full activation event for audit and attribution.</p>
+    <div class="bottom-kicker">Bilateral architecture preserved. Partner-owned DSP credentials. No central credential pool.</div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">PLATFORM · UNBRANDED SPONSOR CAPABILITY</span><h2 class="h2">Summit runs the ads pharma brands <span class="y-under">can't.</span></h2></div>
+    <p class="body" style="max-width:920px;margin:0 auto 32px;text-align:center;">Meta, Google, and many DSPs restrict pharma brands from advertising prescription drugs directly. Unbranded condition campaigns can run, but the legal sponsor must be an independent entity. Summit Audience Segments serves as that sponsor — running unbranded condition campaigns on behalf of pharma brands while preserving brand separation.</p>
+    <div class="compare">
+      <div class="compare__col">
+        <span class="compare__cap">Stage 1 · Unbranded ad on Meta</span>
+        <div class="compare__row" style="padding:14px 18px;border:1px dashed var(--c-border);border-radius:8px;font-size:15px;color:#fff;">"Free diabetic cookbook"</div>
+        <div class="compare__row" style="padding:14px 18px;border:1px dashed var(--c-border);border-radius:8px;font-size:15px;color:#fff;">"60-second OSA screener"</div>
+        <div class="compare__row" style="padding:14px 18px;border:1px dashed var(--c-border);border-radius:8px;font-size:15px;color:#fff;">"BMI risk check"</div>
+        <p class="card__body" style="margin-top:8px">Run by Summit · Meta-compliant. Native Instant Form OR Summit-hosted landing.</p>
+        <div style="margin-top:auto;padding:14px;background:var(--c-coral-soft);border:1px solid var(--c-coral-line);border-radius:8px;">
+          <div style="font-family:var(--c-mono);font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--c-coral);font-weight:600;margin-bottom:4px;">Dynamic Qualifier</div>
+          <div style="font-size:13.5px;color:var(--c-text-dim);line-height:1.55">Skip questions Summit already knows from the seed list. Only ask what's new.</div>
+        </div>
+      </div>
+      <div class="compare__col">
+        <span class="compare__cap">Stage 2 · Qualified user routed</span>
+        <p class="card__body">Qualified user routes to <b style="color:#fff">branded landing page</b> (Summit-hosted or brand-hosted) for the full pharma campaign experience.</p>
+        <div class="compare__row" style="padding:12px 16px;background:var(--c-bg-input);border-radius:6px;font-size:13.5px;"><b style="color:#fff">Branded ISI</b> · Important Safety Information rendered per MLR</div>
+        <div class="compare__row" style="padding:12px 16px;background:var(--c-bg-input);border-radius:6px;font-size:13.5px;"><b style="color:#fff">Branded CTA</b> · Full pharma campaign experience</div>
+        <div class="compare__row" style="padding:12px 16px;background:var(--c-bg-input);border-radius:6px;font-size:13.5px;"><b style="color:#fff">Lead delivery</b> · Captured and routed to brand CRM</div>
+      </div>
+    </div>
+    <div class="bottom-kicker">The structural bridge between Meta's audience and the pharma brand's funnel.</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">PLATFORM · DYNAMIC QUALIFIER STUDIO</span><h2 class="h2">Logic-tree qualifier. Built per brand. Optimized over time.</h2></div>
+    <p class="body" style="max-width:920px;margin:0 auto 32px;text-align:center;">Every unbranded ad funnels users through a dynamic qualifier — a branching question flow designed to filter only the patients matching the brand's target profile. The qualifier engine has read access to Summit's data layer: when a user comes from a Summit-seeded audience, Summit already knows their condition, demographics, and geography. The qualifier skips known attributes and only asks what's new.</p>
+    <div class="compare">
+      <div class="compare__col">
+        <span class="compare__cap">Competitor Qualifier · Cold Traffic</span>
+        <div class="compare__row">Q1: Do you have type 2 diabetes?</div>
+        <div class="compare__row">Q2: Are you currently on medication?</div>
+        <div class="compare__row">Q3: What's your BMI range?</div>
+        <div class="compare__row">Q4: Are you currently on metformin?</div>
+        <div class="compare__foot">4 Questions · 35% Completion</div>
+      </div>
+      <div class="compare__col compare__col--win">
+        <span class="compare__cap">Summit Qualifier · Seeded Traffic</span>
+        <div class="compare__row" style="opacity:0.5;text-decoration:line-through">Q1: Do you have type 2 diabetes? ✓ known</div>
+        <div class="compare__row" style="opacity:0.5;text-decoration:line-through">Q2: Sex / Age band ✓ known</div>
+        <div class="compare__row" style="opacity:0.5;text-decoration:line-through">Q3: BMI range ✓ known</div>
+        <div class="compare__row" style="color:var(--c-cyan)"><b>Q1: Are you currently on metformin?</b></div>
+        <div class="compare__foot">1 Question · 78% Completion</div>
+      </div>
+    </div>
+    <div class="bottom-kicker">2× conversion lift on Summit-seeded traffic vs. cold traffic competitors.</div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">PLATFORM · LANDING PAGE STUDIO</span><h2 class="h2">Build landing pages. Or recreate them.</h2></div>
+    <p class="body" style="max-width:920px;margin:0 auto 32px;text-align:center;">Two output modes for every campaign.</p>
+    <div class="grid grid-3">
+      <div class="card"><span class="card__kicker">Mode A · Summit-Hosted</span><h3 class="card__title">Templated landing page</h3><p class="card__body"><b>20+ templated pages</b> covering common pharma scenarios. Drag-and-drop editor. Brand variables for logo, colors, fonts, copy. Pre-installed pixels for all major DSPs. Mobile-responsive, accessible, sub-2-second load. Multi-form sequential chaining for cross-brand opportunities.</p></div>
+      <div class="card"><span class="card__kicker">Mode B · Native DSP Form</span><h3 class="card__title">No landing page</h3><p class="card__body"><b>Meta Instant Forms</b> and Google Lead Form Extensions registered directly. Form lives entirely inside the DSP for maximum conversion. Leads flow into Summit's lead management via DSP API.</p></div>
+      <div class="card card--cyan"><span class="card__kicker">Bonus · Recreation</span><h3 class="card__title">Brand page recreation</h3><p class="card__body">If a brand has an existing MLR-approved landing page, Summit's recreation engine <b>clones it from URL or spec doc</b>. Pixel-perfect within 24 hours. <b>Faster brand MLR re-approval</b> because the design is unchanged.</p></div>
+    </div>
+    <div class="bottom-kicker">Templated. Native. Recreated. Whatever the campaign needs.</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">PLATFORM · LEAD MANAGEMENT</span><h2 class="h2">Every lead. Validated, routed, delivered.</h2></div>
+    <p class="body" style="max-width:920px;margin:0 auto 32px;text-align:center;">The operational layer underneath the platform. Captures every lead, validates each one, routes to the right brand, tracks delivery — with full economic visibility per campaign.</p>
+    <div class="grid grid-3">
+      <div class="card"><span class="card__kicker">Capture</span><p class="card__body">Every form on every surface · Meta Instant Forms · Google Lead Forms · Summit-hosted branded pages · Summit-hosted unbranded qualifiers · Brand-hosted page pixel events</p></div>
+      <div class="card"><span class="card__kicker">Distribute</span><p class="card__body">HTTP POST · JSON · XML · SOAP · Webhook · Email · S3 · FTP · Salesforce · HubSpot · Marketo · Veeva native connectors · Per-brand delivery configuration · Real-time delivery + confirmation</p></div>
+      <div class="card"><span class="card__kicker">Validate</span><p class="card__body">Phone + email format checks · Duplicate detection · Fraud signal screening · Consent + compliance verification · Quality scoring per lead</p></div>
+      <div class="card card--cyan"><span class="card__kicker">Suppress · Powered by THIIC</span><p class="card__body">Brands send their suppression list via THIIC bilateral exchange. <b>No PII transit. Hashed identifiers only.</b> Summit scrubs incoming leads against the brand's existing patient list before delivery — so brands never pay for leads they already own.</p></div>
+      <div class="card"><span class="card__kicker">Route</span><p class="card__body">Brand-specific lead routing · Geographic + demographic targeting · Compliance-aware routing · Cap management (daily/weekly/total) · Multi-brand sequential chains</p></div>
+      <div class="card"><span class="card__kicker">Financial Reporting</span><p class="card__body">Real-time revenue tracking · P&amp;L per campaign · Cost per qualified lead · Margin per brand relationship · Audit-grade transaction history</p></div>
+    </div>
+    <div class="bottom-kicker">Brand-specific lead routing. Real-time delivery. THIIC-powered suppression. Zero waste.</div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">PLATFORM · CREATIVE + MEDIA BUYING</span><h2 class="h2">Build creative. Buy media. Manage MLR. One workflow.</h2></div>
+    <p class="body" style="max-width:920px;margin:0 auto 32px;text-align:center;">Display Campaign Studio gives brand teams a unified creative and media buying surface across DSPs. Drag-and-drop creative builder. 20+ pre-built creative templates per condition. Brand kit customization. Automatic platform-specific export (Meta, Google, TTD, DeepIntent each have different specs — handled automatically).</p>
+    <div class="grid grid-3">
+      <div class="card"><span class="card__kicker">MLR Integration</span><p class="card__body">Veeva PromoMats native connector for branded creative review. Export creative to Veeva for MLR; import approved version back. Full audit trail of every revision, every reviewer, every approval. <b>FDA-inspection ready.</b></p></div>
+      <div class="card"><span class="card__kicker">Sponsor Entity Management</span><p class="card__body">For unbranded campaigns running under Summit's sponsor identity, the platform handles the legal handoff — campaign launches under Summit's Meta/Google account, billing flows through Summit-to-brand reconciliation, audit log records every step.</p></div>
+      <div class="card"><span class="card__kicker">Cross-DSP Performance</span><p class="card__body">Unified dashboard across Meta, Google, TTD, DeepIntent. A/B test results, creative performance, audience performance, landing-page performance, condition-level economics — all in one view.</p></div>
+    </div>
+    <div class="bottom-kicker">Creative · MLR · sponsor entity · media buy · attribution. One workflow.</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">COMPLIANCE · CONSENT BY DESIGN</span><h2 class="h2">Privacy posture that survives any audit.</h2></div>
+    <p class="body" style="max-width:920px;margin:0 auto 32px;text-align:center;">Summit's consent infrastructure is geo-aware, tier-based, and designed around the strictest state privacy laws — <b style="color:#fff">CCPA/CPRA, Washington MHMDA, Colorado CPA, Connecticut CTDPA, Virginia VCDPA, plus EU GDPR</b> for cross-border traffic. Recognized as best-practice by every brand MLR team that has reviewed it.</p>
+    <div class="grid grid-3">
+      <div class="card"><span class="card__kicker">Tier 1 · Essential</span><h3 class="card__title">Always on.</h3><p class="card__body">Session, security, geo.</p></div>
+      <div class="card"><span class="card__kicker">Tier 2 · Analytics</span><h3 class="card__title">Opt-in required.</h3><p class="card__body">Anonymous behavioral.</p></div>
+      <div class="card card--cyan"><span class="card__kicker">Tier 3 · Marketing</span><h3 class="card__title">Explicit opt-in.</h3><p class="card__body">Health-specific consent language.</p></div>
+    </div>
+    <ul class="body" style="max-width:920px;margin:32px auto 0;line-height:1.9">
+      <li>DSAR (Data Subject Access Request) workflow with 45-day SLA</li>
+      <li>State-by-state opt-out mechanisms</li>
+      <li>GPC (Global Privacy Control) signal recognition</li>
+      <li>Right-to-deletion enforcement across all platform data</li>
+      <li>Audit log of every consent event, every revocation, every DSAR</li>
+    </ul>
+    <div class="bottom-kicker">Designed to pass MLR review on first pass. Audited by external counsel.</div>
+  </div>
+</section>
+
+<section class="section section--alt" id="contact">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">SEE THE PLATFORM</span><h2 class="h2">Walk through Summit Exchange with our team.</h2><p class="sub">Live walkthrough of the platform — Audience Explorer, identity matching, DSP activation, landing pages, lead management, display campaigns. Tailored to your campaign objectives.</p></div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><a class="btn btn--coral btn--lg" href="mailto:info@summitaudiencesegments.com">Talk to Our Team ↗</a><a class="btn btn--outline btn--lg" href="#">Open Summit Exchange ↗</a></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__grid">
+      <div><div class="nav__brand"><img src="assets/logo-icon-pink.png" alt="" style="height:32px"/><span>Summit <b>AudienceSegments</b></span></div><p class="footer__brand-line">First-party healthcare audience data. 20-year exclusive license.</p></div>
+      <div class="footer__col"><h4>Site</h4><ul><li><a href="platform.html#summit-exchange">Audience Explorer</a></li><li><a href="https://thiic.com" target="_blank" rel="noopener">THIIC ↗</a></li></ul></div>
+      <div class="footer__col"><h4>Contact</h4><ul><li><a href="mailto:info@summitaudiencesegments.com">info@summitaudiencesegments.com</a></li></ul></div>
+    </div>
+    <div class="footer__conditions"><a href="data.html#diabetes">Diabetes</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#sleep-apnea">Sleep Apnea</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#cardiac">Cardiac</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#obesity">Obesity / GLP-1</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#polypharmacy">Polypharmacy</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#medicare">Medicare Advantage</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#pain">Chronic Pain</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#incontinence">Incontinence</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#respiratory">Respiratory</a></div>
+    <div class="footer__compliance"><span><span class="dot"></span>ENCRYPTED · AES-256-GCM</span><span><span class="dot"></span>HIPAA SAFE HARBOR</span><span><span class="dot"></span>BAA COMPATIBLE</span><span><span class="dot"></span>SOC 2 TYPE II IN PROGRESS</span></div>
+    <div class="footer__bottom"><span>© 2026 Summit Audience Segments, LLC. All rights reserved.</span><span><a href="#">Do Not Sell or Share My Personal Information</a> · <a href="#">Cookie Preferences</a></span></div>
+  </div>
+</footer>
+
+</body></html>
+
+==============================================================================
+  FILE 05 / 7   v2/data.html
+              Page 03 · Data
+              165 lines · 16.3 kB
+==============================================================================
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Data · Summit Audience Segments</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/png" href="assets/logo-icon-pink.png" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="page">
+
+<nav class="nav">
+  <a href="home.html" class="nav__brand"><img src="assets/logo-icon-pink.png" alt="" /><span>Summit <b>AudienceSegments</b></span></a>
+  <div class="nav__links">
+    <a class="nav__link" href="home.html">Home</a>
+    <a class="nav__link" href="platform.html">Platform</a>
+    <a class="nav__link nav__link--active" href="data.html">Data</a>
+    <a class="nav__link" href="https://thiic.com" target="_blank" rel="noopener">THIIC ↗</a>
+    <a class="nav__link" href="about.html">About</a>
+  </div>
+  <div class="nav__right">
+    <a class="nav__signin" href="#">Sign in to Summit Exchange ↗</a>
+    <a class="nav__signin" href="#">Sign in to THIIC Portal ↗</a>
+    <a class="nav__cta" href="#contact">Get in touch</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero__inner">
+    <span class="kicker">THE DATA LAYER</span>
+    <h1 class="h1 h1--xl">15.3M condition-confirmed patient records. <span class="y-under">Exclusive for 20 years.</span></h1>
+    <p class="sub">Operationally generated. First-party. Consent-based. Refreshed daily. The largest exclusive condition-confirmed cohort in healthcare.</p>
+    <div class="hero__ctas">
+      <a class="btn btn--outline btn--lg" href="#tiers">See Tier Detail ↓</a>
+      <a class="btn btn--coral btn--lg" href="#contact">Talk to Our Team ↗</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:48px;padding-bottom:48px;">
+  <div class="section__inner">
+    <div class="stat-strip">
+      <div class="stat-strip__cell"><span class="stat-strip__cap">T3 · Qualified Intent</span><span class="stat-strip__val">15.3M+</span></div>
+      <div class="stat-strip__cell"><span class="stat-strip__cap">T2 · Dx-Qualified</span><span class="stat-strip__val">218,071</span></div>
+      <div class="stat-strip__cell"><span class="stat-strip__cap">T1 · Tx-Verified</span><span class="stat-strip__val">140,216</span></div>
+      <div class="stat-strip__cell"><span class="stat-strip__cap">HCP · Verified Prescribers</span><span class="stat-strip__val">166,464</span></div>
+      <div class="stat-strip__cell"><span class="stat-strip__cap">Exclusive License</span><span class="stat-strip__val">20-Year</span></div>
+      <div class="stat-strip__cell"><span class="stat-strip__cap">Annual Rx Events</span><span class="stat-strip__val">1,008,348</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">PROVENANCE</span><h2 class="h2">How this data was built.</h2></div>
+    <div style="max-width:920px;margin:0 auto 40px;display:flex;flex-direction:column;gap:18px;">
+      <p class="body">Summit's dataset wasn't aggregated — it was operationally generated. Three healthcare operating entities ran condition-specific patient acquisition campaigns for a decade. Every record traces back to a real patient who raised their hand on an unbranded campaign — not a claim, not a model, not a list purchase.</p>
+      <p class="body">The result is a patient intent layer — not a list. Every record represents a real, diagnosed patient who self-identified with a chronic condition by completing an unbranded supply, Rx, or coverage intake form, or calling in on a click-to-call campaign. Captured upstream of the next claim, not downstream of the last one. First-party, post-conversion, and consented — captured at the moment of in-market shopping between prescriptions, refills, and coverage decisions.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card"><span class="card__kicker">Sourcing</span><h3 class="card__title">First-Party, Direct-to-Consumer</h3><p class="card__body">Every record originates from a consumer who completed an unbranded condition-campaign form. No purchased or modeled records.</p></div>
+      <div class="card"><span class="card__kicker">Verification</span><h3 class="card__title">Diagnosis-Confirmed + Refresh-Validated</h3><p class="card__body">Diagnosis-confirmed and matched to Summit's integrated condition definitions. Refresh validated against pharmacy fulfillment.</p></div>
+      <div class="card"><span class="card__kicker">Consent</span><h3 class="card__title">Baseline Consent + Quarterly Refresh</h3><p class="card__body">Patient consent captured at intake; quarterly refresh confirms continued opt-in or removes records from the active cohort.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="tiers">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">DATA TIERS</span><h2 class="h2">Four tiers. <span class="y-under">Increasing depth</span> at each level.</h2></div>
+    <div class="grid grid-2">
+      <div class="card"><span class="card__kicker">T1 · Tx-Verified</span><div class="stat-card__val" style="font-size:48px;color:var(--c-coral)">140,216</div><p class="card__body">Form completed → called → clinically qualified → supply fulfilled. Closed-loop fulfillment captured against signed patient intent.</p></div>
+      <div class="card"><span class="card__kicker">T2 · Dx-Qualified</span><div class="stat-card__val" style="font-size:48px">218,071</div><p class="card__body">Form completed → called → clinically confirmed → failed on logistics, not qualification. Real, diagnosed, in-market patients blocked by process.</p></div>
+      <div class="card"><span class="card__kicker">T3 · Qualified Intent</span><div class="stat-card__val" style="font-size:48px;color:var(--c-coral)">15.3M+</div><p class="card__body">Form-completed or click-to-call patient inquiries. Self-identified condition + intent. The new patient acquisition cohort and gold seed for predictive AI.</p></div>
+      <div class="card"><span class="card__kicker">HCP · Verified Prescribers</span><div class="stat-card__val" style="font-size:48px;color:var(--c-cyan)">166,464</div><p class="card__body">Prescribers linked to T1/T2 patients via NPI match. Specialty-confirmed. Warm prescribers, not cold specialty codes.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">CROSS-CONDITION OVERLAYS</span><h2 class="h2">Summit's identity layer tracks the same patient across nine condition pathways.</h2><p class="sub">Cross-condition signal that single-cohort datasets miss entirely.</p></div>
+    <div class="grid grid-4">
+      <div class="stat-card"><span class="stat-card__cap">Diabetes</span><span class="stat-card__val">6,819,000</span></div>
+      <div class="stat-card"><span class="stat-card__cap">Sleep Apnea</span><span class="stat-card__val">2,015,000</span></div>
+      <div class="stat-card"><span class="stat-card__cap">Cardiac</span><span class="stat-card__val">2,100,000</span></div>
+      <div class="stat-card"><span class="stat-card__cap">Diabetes + HTN</span><span class="stat-card__val stat-card__val--coral">1,408,000</span></div>
+      <div class="stat-card"><span class="stat-card__cap">OSA + Obesity</span><span class="stat-card__val">1,150,000</span></div>
+      <div class="stat-card"><span class="stat-card__cap">GLP-1 Inquiries</span><span class="stat-card__val">1,240,000</span></div>
+      <div class="stat-card"><span class="stat-card__cap">T3 → T1 Conversions</span><span class="stat-card__val stat-card__val--cyan">140,216</span></div>
+      <div class="stat-card"><span class="stat-card__cap">GLP-1 Shipped</span><span class="stat-card__val">19,470</span></div>
+    </div>
+    <p class="body" style="max-width:920px;margin:36px auto 0;text-align:center;">A single record can seed a GLP-1 campaign, a cardiovascular campaign, a hypertension campaign, an antidepressant campaign, and a sleep-disorder campaign at the same time. <b style="color:#fff">Real patients on multiple condition pathways — not modeled prevalence.</b></p>
+    <div class="bottom-kicker">Real patients across multiple condition pathways. Not modeled prevalence.</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">ENRICHMENT</span><h2 class="h2">Demographics, area health context, identity-graph attributes attached to every record.</h2></div>
+    <div class="grid grid-3">
+      <div class="stat-card"><span class="stat-card__cap">Records with Full Demographic Context</span><span class="stat-card__val">15.3M</span></div>
+      <div class="stat-card"><span class="stat-card__cap">Hashed Email Coverage for Identity-Graph Match</span><span class="stat-card__val stat-card__val--cyan">74.5%</span></div>
+      <div class="stat-card"><span class="stat-card__cap">Linked Attributes per Record</span><span class="stat-card__val">15</span><span class="stat-card__sub">Geo · demographics · comorbidity profile · payer type · prescriber relationship · refill cadence · channel preference.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">CONDITION PATHWAYS</span><h2 class="h2">Nine conditions. One identity layer.</h2></div>
+    <div class="grid grid-3">
+      <div class="card" id="diabetes"><span class="card__kicker">Diabetes</span><div style="font-family:var(--c-mono);font-size:22px;font-weight:600;color:#fff">6,819,000</div><p class="card__body">T1/T2/T3 across Type 1 and Type 2 diabetes, including pre-diabetic intent.</p></div>
+      <div class="card" id="sleep-apnea"><span class="card__kicker">Sleep Apnea</span><div style="font-family:var(--c-mono);font-size:22px;font-weight:600;color:#fff">2,015,000</div><p class="card__body">CPAP-eligible patients across diagnosis, supply, and replacement cycles.</p></div>
+      <div class="card" id="cardiac"><span class="card__kicker">Cardiac</span><div style="font-family:var(--c-mono);font-size:22px;font-weight:600;color:#fff">2,100,000</div><p class="card__body">CVD-confirmed patients on HTN, lipid, antiplatelet, and AFib therapies.</p></div>
+      <div class="card" id="obesity"><span class="card__kicker">Obesity / GLP-1</span><div style="font-family:var(--c-mono);font-size:22px;font-weight:600;color:#fff">1,240,000</div><p class="card__body">BMI-qualified intent + GLP-1 inquiries + 19,470 confirmed-shipment cohort.</p></div>
+      <div class="card" id="polypharmacy"><span class="card__kicker">Polypharmacy</span><div style="font-family:var(--c-mono);font-size:22px;font-weight:600;color:#fff">~3.2M</div><p class="card__body">Cross-condition patients managing five or more concurrent therapies.</p></div>
+      <div class="card" id="medicare"><span class="card__kicker">Medicare Advantage</span><div style="font-family:var(--c-mono);font-size:22px;font-weight:600;color:#fff">~2.4M</div><p class="card__body">Coverage-aware cohorts qualified for newly-covered therapies and plans.</p></div>
+      <div class="card" id="pain"><span class="card__kicker">Chronic Pain</span><div style="font-family:var(--c-mono);font-size:22px;font-weight:600;color:#fff">~1.6M</div><p class="card__body">Non-opioid pain management seekers and downstream Rx-eligible patients.</p></div>
+      <div class="card" id="incontinence"><span class="card__kicker">Incontinence</span><div style="font-family:var(--c-mono);font-size:22px;font-weight:600;color:#fff">~580,000</div><p class="card__body">OAB and stress-incontinence patient intent across supply and Rx routes.</p></div>
+      <div class="card" id="respiratory"><span class="card__kicker">Respiratory</span><div style="font-family:var(--c-mono);font-size:22px;font-weight:600;color:#fff">~1.1M</div><p class="card__body">COPD + asthma maintenance cohorts with documented refill cadence.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">COMPLIANCE</span><h2 class="h2">HIPAA Safe Harbor. BAA compatible. SOC 2 in progress.</h2></div>
+    <p class="body" style="max-width:920px;margin:0 auto 32px;text-align:center;">Summit operates under HIPAA Safe Harbor de-identification (45 CFR §164.514(b)(2)). Source partner agreements include BAAs; Summit licenses data via flow-down BAA structure. Summit is never a covered entity — patient data flows through covered-entity partners before reaching Summit's de-identified data layer.</p>
+    <div class="grid grid-3">
+      <div class="card"><span class="card__kicker">HIPAA Safe Harbor</span><p class="card__body">45 CFR §164.514(b)(2) de-identification. All records de-identified before commercial transfer.</p></div>
+      <div class="card"><span class="card__kicker">BAA Framework</span><p class="card__body">BAAs with source partners. Flow-down BAA structure for partners accessing T1 or T2 data tiers.</p></div>
+      <div class="card"><span class="card__kicker">SOC 2 Type II</span><p class="card__body">Audit in progress. Reports available under NDA upon completion.</p></div>
+    </div>
+    <div style="margin-top:32px;padding:24px 28px;background:var(--c-bg-surface);border:1px solid var(--c-border);border-radius:12px;text-align:center">
+      <div style="font-family:var(--c-mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--c-text-mute);font-weight:600;margin-bottom:12px;">State Privacy Compliance</div>
+      <div style="font-family:var(--c-mono);font-size:13px;color:var(--c-text-dim);letter-spacing:0.04em;">Washington MHMDA · California CCPA/CPRA · Colorado CPA · Connecticut CTDPA · Virginia VCDPA · Plus all other state-level frameworks.</div>
+      <div style="margin-top:10px;font-size:13.5px;color:var(--c-text-dim);">Geo-aware consent infrastructure handles per-state requirements automatically.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt" id="contact">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">EXPLORE THE DATA</span><h2 class="h2">Match your audience criteria against Summit's exclusive cohort.</h2></div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><a class="btn btn--coral btn--lg" href="mailto:info@summitaudiencesegments.com">Talk to Our Team ↗</a><a class="btn btn--outline btn--lg" href="platform.html">See Summit Exchange ↗</a></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__grid">
+      <div><div class="nav__brand"><img src="assets/logo-icon-pink.png" alt="" style="height:32px"/><span>Summit <b>AudienceSegments</b></span></div><p class="footer__brand-line">First-party healthcare audience data. 20-year exclusive license.</p></div>
+      <div class="footer__col"><h4>Site</h4><ul><li><a href="platform.html#summit-exchange">Audience Explorer</a></li><li><a href="https://thiic.com" target="_blank" rel="noopener">THIIC ↗</a></li></ul></div>
+      <div class="footer__col"><h4>Contact</h4><ul><li><a href="mailto:info@summitaudiencesegments.com">info@summitaudiencesegments.com</a></li></ul></div>
+    </div>
+    <div class="footer__conditions"><a href="#diabetes">Diabetes</a><span style="color:var(--c-text-faint)">·</span><a href="#sleep-apnea">Sleep Apnea</a><span style="color:var(--c-text-faint)">·</span><a href="#cardiac">Cardiac</a><span style="color:var(--c-text-faint)">·</span><a href="#obesity">Obesity / GLP-1</a><span style="color:var(--c-text-faint)">·</span><a href="#polypharmacy">Polypharmacy</a><span style="color:var(--c-text-faint)">·</span><a href="#medicare">Medicare Advantage</a><span style="color:var(--c-text-faint)">·</span><a href="#pain">Chronic Pain</a><span style="color:var(--c-text-faint)">·</span><a href="#incontinence">Incontinence</a><span style="color:var(--c-text-faint)">·</span><a href="#respiratory">Respiratory</a></div>
+    <div class="footer__compliance"><span><span class="dot"></span>ENCRYPTED · AES-256-GCM</span><span><span class="dot"></span>HIPAA SAFE HARBOR</span><span><span class="dot"></span>BAA COMPATIBLE</span><span><span class="dot"></span>SOC 2 TYPE II IN PROGRESS</span></div>
+    <div class="footer__bottom"><span>© 2026 Summit Audience Segments, LLC. All rights reserved.</span><span><a href="#">Do Not Sell or Share My Personal Information</a> · <a href="#">Cookie Preferences</a></span></div>
+  </div>
+</footer>
+
+</body></html>
+
+==============================================================================
+  FILE 06 / 7   v2/thiic.html
+              Page 04 · THIIC
+              143 lines · 13.5 kB
+==============================================================================
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>THIIC · Summit Audience Segments</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/png" href="assets/logo-icon-pink.png" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="page">
+
+<nav class="nav">
+  <a href="home.html" class="nav__brand"><img src="assets/logo-icon-pink.png" alt="" /><span>Summit <b>AudienceSegments</b></span></a>
+  <div class="nav__links">
+    <a class="nav__link" href="home.html">Home</a>
+    <a class="nav__link" href="platform.html">Platform</a>
+    <a class="nav__link" href="data.html">Data</a>
+    <a class="nav__link nav__link--active" href="https://thiic.com" target="_blank" rel="noopener">THIIC ↗</a>
+    <a class="nav__link" href="about.html">About</a>
+  </div>
+  <div class="nav__right">
+    <a class="nav__signin" href="#">Sign in to Summit Exchange ↗</a>
+    <a class="nav__signin" href="#">Sign in to THIIC Portal ↗</a>
+    <a class="nav__cta" href="#contact">Get in touch</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero__inner">
+    <span class="kicker">SUMMIT PROTOCOL</span>
+    <h1 class="h1 h1--xl">The identity layer <span class="y-under">underneath the platform.</span></h1>
+    <p class="sub">THIIC is Summit's proprietary bilateral cryptographic protocol for healthcare identity exchange. Production-deployed. Patent-pending. Built specifically to enable data partnerships without vendor middleware.</p>
+    <div class="hero__pills">
+      <span class="pill pill--cyan"><span class="pill__dot"></span>LIVE · Production deployed</span>
+      <span class="pill pill--yellow"><span class="pill__dot"></span>EXTERNAL AUDIT IN PROGRESS</span>
+    </div>
+    <div class="hero__ctas">
+      <a class="btn btn--coral btn--lg" href="https://thiic.com">Visit thiic.com ↗</a>
+      <a class="btn btn--outline btn--lg" href="#contact">Talk to Our Team ↗</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">THE PROTOCOL</span><h2 class="h2">Bilateral identity exchange without middleware.</h2></div>
+    <p class="body" style="max-width:920px;margin:0 auto 36px;text-align:center;">THIIC is Summit's proprietary identity exchange protocol. Two parties — typically Summit and a licensed partner — exchange hashed identifiers to find overlap between their respective data, without either side transmitting raw PII and without a third-party vendor sitting between them.</p>
+    <div class="grid grid-3">
+      <div class="card"><span class="card__kicker">01 · No Middleware</span><p class="card__body">LiveRamp, Snowflake clean rooms, AWS clean rooms — all require your data to enter the vendor's environment. <b>THIIC is bilateral. No vendor.</b></p></div>
+      <div class="card"><span class="card__kicker">02 · No Per-Record Fees</span><p class="card__body">Identity vendors charge per-match fees that compound at scale. <b>THIIC has zero per-transaction fees.</b></p></div>
+      <div class="card"><span class="card__kicker">03 · No Holding-Co Ownership</span><p class="card__body">Identity infrastructure increasingly owned by a single agency conglomerate. <b>THIIC is privately held, healthcare-specific, structurally independent.</b></p></div>
+      <div class="card"><span class="card__kicker">04 · Bilateral Key Derivation</span><p class="card__body">Both parties contribute key material. Neither side can unilaterally decrypt. <b>No privileged operator — not even Summit.</b></p></div>
+      <div class="card"><span class="card__kicker">05 · Built for Healthcare</span><p class="card__body">HIPAA Safe Harbor, BAA flow-down, state laws (MHMDA, CMIA, CPA, etc.). <b>Purpose-built, not retrofitted.</b></p></div>
+      <div class="card"><span class="card__kicker">06 · Standard Primitives</span><p class="card__body">SHA-256, HKDF-SHA256, AES-256-GCM, Ed25519. All FIPS 140-2. All RFCs. <b>No novel cryptography.</b></p></div>
+    </div>
+    <div class="bottom-kicker">Standard primitives. Distinctive architecture. Published RFCs · FIPS 140-2 · External crypto audit in progress.</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">EIGHT-STEP PROTOCOL</span><h2 class="h2">From raw identifier to partner-side match.</h2></div>
+    <p class="body" style="max-width:920px;margin:0 auto 36px;text-align:center;">The protocol runs in eight cryptographic steps. The first five happen on the sender side, the next two move bilaterally, and the final step lands on the recipient side.</p>
+    <div class="steps">
+      <div class="step"><div class="step__header"><span class="step__num">01</span><span class="step__role step__role--sender">SENDER</span></div><div class="step__name">NORMALIZE</div><div class="step__desc">Identifiers normalized — phone to E.164, email lowercased.</div></div>
+      <div class="step"><div class="step__header"><span class="step__num">02</span><span class="step__role step__role--sender">SENDER</span></div><div class="step__name">HASH</div><div class="step__desc">Each identifier hashed with SHA-256, client-side.</div></div>
+      <div class="step"><div class="step__header"><span class="step__num">03</span><span class="step__role step__role--bilateral">BILATERAL</span></div><div class="step__name">DERIVE</div><div class="step__desc">HKDF-SHA256 derives a key from both parties' master material.</div></div>
+      <div class="step"><div class="step__header"><span class="step__num">04</span><span class="step__role step__role--sender">SENDER</span></div><div class="step__name">WRAP</div><div class="step__desc">Hashes encrypted with AES-256-GCM.</div></div>
+      <div class="step"><div class="step__header"><span class="step__num">05</span><span class="step__role step__role--sender">SENDER</span></div><div class="step__name">SIGN</div><div class="step__desc">Ed25519 signs the bundle metadata.</div></div>
+      <div class="step"><div class="step__header"><span class="step__num">06</span><span class="step__role step__role--bilateral">BILATERAL</span></div><div class="step__name">TRANSMIT</div><div class="step__desc">Bundle transmitted over mTLS or pre-signed S3.</div></div>
+      <div class="step"><div class="step__header"><span class="step__num">07</span><span class="step__role step__role--recipient">RECIPIENT</span></div><div class="step__name">VERIFY</div><div class="step__desc">Recipient verifies Ed25519 signature.</div></div>
+      <div class="step"><div class="step__header"><span class="step__num">08</span><span class="step__role step__role--recipient">RECIPIENT</span></div><div class="step__name">UNWRAP</div><div class="step__desc">Recipient derives the same key and unwraps.</div></div>
+    </div>
+    <div style="text-align:center;margin-top:32px;"><a class="btn btn--outline" href="https://thiic.com/docs">Read the protocol docs ↗</a></div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">SECURITY</span><h2 class="h2">What THIIC defends against.</h2></div>
+    <div class="grid grid-2">
+      <div class="card"><span class="card__kicker">Summit Breached</span><p class="card__body">Attacker holds Summit's master plus raw data.</p><span class="pill pill--cyan" style="margin-top:auto;"><span class="pill__dot"></span>PARTNER SAFE</span></div>
+      <div class="card"><span class="card__kicker">Partner Breached</span><p class="card__body">Attacker holds partner's master plus delivered tokens.</p><span class="pill pill--cyan" style="margin-top:auto;"><span class="pill__dot"></span>SUMMIT SAFE</span></div>
+      <div class="card"><span class="card__kicker">Bundle Intercepted in Transit</span><p class="card__body">Attacker holds signed wrapped tokens, no keys.</p><span class="pill pill--cyan" style="margin-top:auto;"><span class="pill__dot"></span>NO RECOVERY</span></div>
+      <div class="card"><span class="card__kicker">Both Parties Breached</span><p class="card__body">Attacker holds everything from both sides.</p><span class="pill pill--yellow" style="margin-top:auto;"><span class="pill__dot"></span>SEE WHITEPAPER</span></div>
+    </div>
+    <p class="body" style="max-width:920px;margin:32px auto 0;text-align:center;"><b style="color:#fff">Defense by architecture, not just policy.</b> Single-party compromise leaves the other party's data structurally safe. Network observers cannot decrypt without bilateral key material. Bundle tampering detected via Ed25519 signature on metadata plus AAD-bound payload.</p>
+    <div style="text-align:center;margin-top:24px;"><a class="btn btn--outline" href="https://thiic.com">Read the security whitepaper ↗</a></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">COMPLIANCE</span><h2 class="h2">Built for the strictest regulatory contexts in healthcare.</h2></div>
+    <ul class="body" style="max-width:760px;margin:0 auto;line-height:2;list-style:none;padding:0">
+      <li>· HIPAA Safe Harbor — 45 CFR §164.514(b)(2)</li>
+      <li>· BAA framework with source partners</li>
+      <li>· Washington MHMDA compatible</li>
+      <li>· California CMIA, CCPA/CPRA</li>
+      <li>· All other state health data laws</li>
+      <li>· FIPS 140-2 cryptographic primitives</li>
+      <li>· NIST validation standards</li>
+      <li>· External crypto audit in progress</li>
+      <li>· SOC 2 Type II in progress</li>
+    </ul>
+    <p class="body" style="max-width:760px;margin:32px auto 0;text-align:center;">Compliance posture passes MLR review on first pass for every brand we've worked with. Available under NDA: external audit reports, SOC 2 documentation, BAA templates, state-by-state compliance documentation.</p>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">STACK FIT</span><h2 class="h2">How THIIC fits in your stack.</h2><p class="sub">THIIC isn't a replacement for the rest of your data infrastructure. It's the bilateral exchange layer underneath it.</p></div>
+    <div class="grid grid-3">
+      <div class="card"><span class="card__kicker">Alongside Clean Rooms</span><p class="card__body">Clean rooms handle joint analytical queries. THIIC handles bilateral identifier exchange. <b>Both serve different purposes — use both.</b></p></div>
+      <div class="card"><span class="card__kicker">Alongside Identity Graphs</span><p class="card__body">Identity vendors enrich and resolve identifiers. THIIC moves hashed identifiers between parties <b>without middleware</b>.</p></div>
+      <div class="card"><span class="card__kicker">Alongside Activation Platforms</span><p class="card__body">DSPs and activation platforms execute campaigns. THIIC powers the <b>audience-match layer that feeds them</b>.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="contact">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">DEEPER TECHNICAL DOCUMENTATION</span><h2 class="h2">Full protocol documentation lives at thiic.com.</h2></div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><a class="btn btn--coral btn--lg" href="https://thiic.com">Visit thiic.com ↗</a><a class="btn btn--outline btn--lg" href="mailto:info@summitaudiencesegments.com">Talk to Our Team ↗</a></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__grid">
+      <div><div class="nav__brand"><img src="assets/logo-icon-pink.png" alt="" style="height:32px"/><span>Summit <b>AudienceSegments</b></span></div><p class="footer__brand-line">First-party healthcare audience data. 20-year exclusive license.</p></div>
+      <div class="footer__col"><h4>Site</h4><ul><li><a href="platform.html#summit-exchange">Audience Explorer</a></li><li><a href="https://thiic.com" target="_blank" rel="noopener">THIIC ↗</a></li></ul></div>
+      <div class="footer__col"><h4>Contact</h4><ul><li><a href="mailto:info@summitaudiencesegments.com">info@summitaudiencesegments.com</a></li></ul></div>
+    </div>
+    <div class="footer__conditions"><a href="data.html#diabetes">Diabetes</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#sleep-apnea">Sleep Apnea</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#cardiac">Cardiac</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#obesity">Obesity / GLP-1</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#polypharmacy">Polypharmacy</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#medicare">Medicare Advantage</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#pain">Chronic Pain</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#incontinence">Incontinence</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#respiratory">Respiratory</a></div>
+    <div class="footer__compliance"><span><span class="dot"></span>ENCRYPTED · AES-256-GCM</span><span><span class="dot"></span>HIPAA SAFE HARBOR</span><span><span class="dot"></span>BAA COMPATIBLE</span><span><span class="dot"></span>SOC 2 TYPE II IN PROGRESS</span></div>
+    <div class="footer__bottom"><span>© 2026 Summit Audience Segments, LLC. All rights reserved.</span><span><a href="#">Do Not Sell or Share My Personal Information</a> · <a href="#">Cookie Preferences</a></span></div>
+  </div>
+</footer>
+
+</body></html>
+
+==============================================================================
+  FILE 07 / 7   v2/about.html
+              Page 05 · About
+              137 lines · 14.0 kB
+==============================================================================
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>About · Summit Audience Segments</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/png" href="assets/logo-icon-pink.png" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="page">
+
+<nav class="nav">
+  <a href="home.html" class="nav__brand"><img src="assets/logo-icon-pink.png" alt="" /><span>Summit <b>AudienceSegments</b></span></a>
+  <div class="nav__links">
+    <a class="nav__link" href="home.html">Home</a>
+    <a class="nav__link" href="platform.html">Platform</a>
+    <a class="nav__link" href="data.html">Data</a>
+    <a class="nav__link" href="https://thiic.com" target="_blank" rel="noopener">THIIC ↗</a>
+    <a class="nav__link nav__link--active" href="about.html">About</a>
+  </div>
+  <div class="nav__right">
+    <a class="nav__signin" href="#">Sign in to Summit Exchange ↗</a>
+    <a class="nav__signin" href="#">Sign in to THIIC Portal ↗</a>
+    <a class="nav__cta" href="#contact">Get in touch</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero__inner">
+    <span class="kicker">ABOUT SUMMIT</span>
+    <h1 class="h1 h1--xl">Three operating entities. A decade of patient acquisition. <span class="y-under">One exclusive dataset.</span></h1>
+    <p class="sub">Summit Audience Segments is the licensee of a 20-year exclusive dataset built operationally by three healthcare patient acquisition businesses. The team behind the data is the team running the company.</p>
+    <div class="hero__ctas">
+      <a class="btn btn--coral btn--lg" href="#contact">Talk to Our Team ↗</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">HOW THIS HAPPENED</span><h2 class="h2">Why Summit exists.</h2></div>
+    <div style="max-width:920px;margin:0 auto 40px;display:flex;flex-direction:column;gap:18px;">
+      <p class="body">For a decade, three operating entities — <b style="color:#fff">Verus Healthcare, Specialty Medical Equipment, and GoHealth360</b> — ran condition-specific patient acquisition campaigns across diabetes, sleep apnea, obesity, cardiac, and adjacent conditions. The data they generated was the operational byproduct of running those campaigns. Each entity held its own piece of the funnel.</p>
+      <p class="body">In 2026, those operating entities collectively granted Summit Audience Segments a <b style="color:#fff">20-year exclusive license</b> to the de-identified data layer across all three businesses. Summit holds the commercial relationship; the source entities continue operating. The license runs from 2026 through 2046.</p>
+      <p class="body">The result is the only company in healthcare with exclusive access to a decade of operationally-generated, first-party, condition-confirmed patient acquisition data. Combined with the THIIC protocol and the Summit Exchange platform, Summit operates as a vertically integrated patient acquisition company.</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="stat-card"><span class="stat-card__cap">20-Year Exclusive License</span><span class="stat-card__val stat-card__val--coral">2026 — 2046</span></div>
+      <div class="stat-card"><span class="stat-card__cap">Operating Entities Contributing Source Data</span><span class="stat-card__val">3</span><span class="stat-card__sub">Continuously.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">LEADERSHIP</span><h2 class="h2">Operators who built the data they now license.</h2></div>
+    <div class="team">
+      <div class="team-card">
+        <div class="team-card__photo">JA</div>
+        <div class="team-card__role">Co-Founder &amp; President</div>
+        <h3 class="team-card__name">Jake Arnold</h3>
+        <p class="team-card__bio">20 years building patient acquisition infrastructure in healthcare media. Jake led sales at <b>Alliance Health Networks</b> during its rise as one of the largest healthcare-vertical ad networks online, then ran sales at <b>Adprime Health</b>, a category leader in pharma DTC media buying. He founded <b>Silver Mountain Ventures</b> in 2015 to operate at the intersection of healthcare consumer acquisition and direct-response strategy — work that produced the partnerships and operating relationships that became Summit's underlying data foundation. At Summit, Jake leads commercial strategy, partnerships, and the platform architecture that turns a decade of operationally-generated patient records into an addressable audience layer. He also owns Provocateur Gallery in Park City, where he lives with his three sons.</p>
+        <div class="team-card__edu">Baylor University, B.A.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-card__photo">GP</div>
+        <div class="team-card__role">Co-Founder &amp; CEO</div>
+        <h3 class="team-card__name">Greg Peyser</h3>
+        <p class="team-card__bio">A two-time founder, two-time exited operator, and eight-time investor across seed and venture stages. Greg started his career as a G-10 spot currency trader at <b>Barclays Capital</b> and a credit derivatives broker at <b>Creditex</b> and <b>Phoenix Partners Group</b> during the post-2008 derivatives market reconstruction. He shifted to operating roles at <b>Suja Juice</b>, running supply chain through the company's growth from $700K to $80M+ in annual revenue. He later co-founded <b>brekki</b> (first-to-market ready-to-eat overnight oats, sold to Cedar's Mediterranean Foods in 2019) and <b>Chefs Life</b>. As founder of <b>TGP Ventures</b>, Greg has invested across consumer products, biomaterials, fitness, and financial technology — including Newlight Technologies, Betterment, Lume Cube, Zeno Gym, and Barry's. At Summit, Greg leads the company.</p>
+        <div class="team-card__edu">Johns Hopkins University, B.A. Economics</div>
+      </div>
+      <div class="team-card">
+        <div class="team-card__photo">JS</div>
+        <div class="team-card__role">Co-Founder &amp; COO</div>
+        <h3 class="team-card__name">Jordan Soblick</h3>
+        <p class="team-card__bio">The operator behind the data. Jordan has spent 18+ years building and running healthcare patient acquisition businesses — first as Managing Member of <b>Chase Consulting Services</b>, then as VP of Marketing at <b>Verus Healthcare</b> (a top-tier national CPAP supplier, acquired by AdaptHealth in 2018), where he built the digital acquisition platform that enrolled 25,000+ sleep apnea patients in 18 months. Today he is Managing Partner &amp; COO of <b>Specialty Medical Equipment</b>, one of the largest national mail-order providers of diabetic testing supplies, serving 50,000+ patients. He also founded <b>GoHealth360</b> in 2016, the direct-response marketing engine specializing in diabetes and sleep health verticals. Both companies are operating entities whose decade of patient acquisition data Summit licenses exclusively. Jordan also co-founded <b>Sleep8</b>, a medical device manufacturer where he holds two issued patents.</p>
+        <div class="team-card__edu">University of Miami School of Business, B.B.A.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">TRACTION</span><h2 class="h2">Built. Deployed. Operational.</h2></div>
+    <div class="checklist">
+      <div class="check-row"><span class="check-row__cap">Data Layer</span><span class="check-row__icon">✓</span><span class="check-row__val">15.3M+ T3 records · 20-year exclusive license</span></div>
+      <div class="check-row"><span class="check-row__cap">Identity Protocol</span><span class="check-row__icon">✓</span><span class="check-row__val">THIIC v1.0 shipped · External audit in progress</span></div>
+      <div class="check-row"><span class="check-row__cap">Platform Core</span><span class="check-row__icon">✓</span><span class="check-row__val">Summit Exchange operational</span></div>
+      <div class="check-row"><span class="check-row__cap">DSP Activation</span><span class="check-row__icon">✓</span><span class="check-row__val">Meta · Google · TTD · DeepIntent connectors</span></div>
+      <div class="check-row"><span class="check-row__cap">Landing Page Studio</span><span class="check-row__icon">✓</span><span class="check-row__val">20+ templates · Dynamic Qualifier · Form Builder</span></div>
+      <div class="check-row"><span class="check-row__cap">Lead Management</span><span class="check-row__icon">✓</span><span class="check-row__val">Validation · Routing · Returns · Financial reporting</span></div>
+      <div class="check-row"><span class="check-row__cap">Brand Page Recreation</span><span class="check-row__icon">✓</span><span class="check-row__val">Recreation engine operational</span></div>
+      <div class="check-row"><span class="check-row__cap">Display Campaigns</span><span class="check-row__icon">✓</span><span class="check-row__val">Creative Studio · MLR Workflow · Sponsor entity mgmt</span></div>
+      <div class="check-row"><span class="check-row__cap">Data Flywheel</span><span class="check-row__icon">✓</span><span class="check-row__val">T3 + T4 ingestion live across all surfaces</span></div>
+      <div class="check-row"><span class="check-row__cap">Consent Infrastructure</span><span class="check-row__icon">✓</span><span class="check-row__val">Multi-state · GDPR · DSAR workflow</span></div>
+      <div class="check-row"><span class="check-row__cap">Compliance</span><span class="check-row__icon">✓</span><span class="check-row__val">HIPAA Safe Harbor · BAA framework · SOC 2 in progress</span></div>
+      <div class="check-row"><span class="check-row__cap">Audit Logging</span><span class="check-row__icon">✓</span><span class="check-row__val">Hash-chained across all platform operations</span></div>
+    </div>
+    <div class="bottom-kicker">Production-deployed. Audit-ready. Available for partnership conversations.</div>
+  </div>
+</section>
+
+<section class="section" id="contact">
+  <div class="section__inner">
+    <div class="section__head"><span class="kicker">STARTING THE CONVERSATION</span><h2 class="h2">Where this goes next depends on what you need.</h2></div>
+    <div class="grid grid-3">
+      <div class="card"><span class="card__kicker">If you're a brand</span><p class="card__body">The fastest path is a focused conversation about your <b>target conditions, audience needs, and timeline.</b> We'll scope a license structure and walk through match rates and cohort sizing.</p></div>
+      <div class="card card--cyan"><span class="card__kicker">If you're an agency or holding company</span><p class="card__body">Summit operates as the <b>independent sponsor entity</b> for unbranded campaign work that brand clients cannot run directly. Multi-brand relationships across the full data layer are available.</p></div>
+      <div class="card card--coral"><span class="card__kicker">If you're exploring a strategic partnership</span><p class="card__body">Summit's data is exclusive. The platform is operational. The protocol is proprietary. We're open to <b>category exclusive, full exclusive, and partnership / rev-share</b> structures depending on what you're building.</p></div>
+    </div>
+    <div style="text-align:center;margin-top:48px;">
+      <a class="btn btn--coral btn--lg" href="mailto:info@summitaudiencesegments.com">Talk to Our Team ↗</a>
+    </div>
+    <div style="text-align:center;margin-top:24px;padding:22px 28px;background:var(--c-bg-surface);border:1px solid var(--c-border);border-radius:12px;max-width:760px;margin-left:auto;margin-right:auto;">
+      <div style="font-family:var(--c-mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--c-text-mute);font-weight:600;margin-bottom:12px">General Inquiries</div>
+      <div style="font-size:15px;color:#fff;letter-spacing:0.02em;">info@summitaudiencesegments.com</div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__grid">
+      <div><div class="nav__brand"><img src="assets/logo-icon-pink.png" alt="" style="height:32px"/><span>Summit <b>AudienceSegments</b></span></div><p class="footer__brand-line">First-party healthcare audience data. 20-year exclusive license.</p></div>
+      <div class="footer__col"><h4>Site</h4><ul><li><a href="platform.html#summit-exchange">Audience Explorer</a></li><li><a href="https://thiic.com" target="_blank" rel="noopener">THIIC ↗</a></li></ul></div>
+      <div class="footer__col"><h4>Contact</h4><ul><li><a href="mailto:info@summitaudiencesegments.com">info@summitaudiencesegments.com</a></li></ul></div>
+    </div>
+    <div class="footer__conditions"><a href="data.html#diabetes">Diabetes</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#sleep-apnea">Sleep Apnea</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#cardiac">Cardiac</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#obesity">Obesity / GLP-1</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#polypharmacy">Polypharmacy</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#medicare">Medicare Advantage</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#pain">Chronic Pain</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#incontinence">Incontinence</a><span style="color:var(--c-text-faint)">·</span><a href="data.html#respiratory">Respiratory</a></div>
+    <div class="footer__compliance"><span><span class="dot"></span>ENCRYPTED · AES-256-GCM</span><span><span class="dot"></span>HIPAA SAFE HARBOR</span><span><span class="dot"></span>BAA COMPATIBLE</span><span><span class="dot"></span>SOC 2 TYPE II IN PROGRESS</span></div>
+    <div class="footer__bottom"><span>© 2026 Summit Audience Segments, LLC. All rights reserved.</span><span><a href="#">Do Not Sell or Share My Personal Information</a> · <a href="#">Cookie Preferences</a></span></div>
+  </div>
+</footer>
+
+</body></html>
+
+==============================================================================
+  END OF SOURCE · 7 files · 1468 lines · 123.1 kB total
+==============================================================================
